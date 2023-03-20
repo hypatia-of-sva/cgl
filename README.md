@@ -16,7 +16,7 @@ available on older platforms, and legacy features in OpenGL 2.1, such as glLight
 GL ES 2.0.
 
 But those are only the obvious differences visible from the header file. The smaller differences, like: the possible modes of glBindBuffer etc., are very
-relevant for porting, but not usually axplained together.
+relevant for porting, but not usually explained together.
 
 This site tries to give documentation of the shared subset, to encourage development of games and application in that shared, simpler API. What are the
 reasons for me encouraging this? There are at least two different ones:
