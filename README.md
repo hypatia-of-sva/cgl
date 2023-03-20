@@ -11,7 +11,7 @@ fast enough.
 
 The problem is, that if you search for OpenGL information, you will usually block yourself into a certain version, when really that is not necessary at
 all. For example: Using Framebuffers and Renderbuffers works in GL ES 2.0, but not in OpenGL 2.1. 1D and 3D Textures are available even before OpenGL 2.0,
-but are entirely missing in GL ES 2.0. And obviously there are many features of modern OpenGL, such as 3.2+ core profile, like VAO and UBO, that are not
+but are entirely missing in GL ES 2.0. And obviously there are many features of modern OpenGL, such as 3.2+ core profile, like VAO and UBO, or location parameters in GLSL, that are not
 available on older platforms, and legacy features in OpenGL 2.1, such as glLight, that are not available in modern OpenGL core profile, and also not in
 GL ES 2.0.
 
@@ -38,5 +38,7 @@ disappointed by the lack of documentation and the complexity of Modern OpenGL, a
 
 I'm currently still working at getting this up and running, and learning myself a lot in the process. Currently I work on synthesizing the OpenGL 2.1, 4.5
 and ES 2.0 reference pages (as per Khronos) into a single CGL reference page. This is still a work in progress, but it should result in a kind of
-manpages for CGL. After that, I plan to write demos for both my own understanding and as tutorials, and also a kind of CGL loader (like glad), that should
+manpages for CGL. I also plan to do the same for the offical API spec and (more importantly) for the respective descriptions of GLSL (being #version 110, 460 and 100).
+
+After that, I plan to write demos for both my own understanding and as tutorials, and also a kind of CGL loader (like glad), that should
 also load the GLenum values at runtime if possible.
