@@ -1,4 +1,4 @@
-# cgl
+# Common OpenGL (CGL)
 Common OpenGL (CGL) - Description of the commen subset of OpenGL 2.1, OpenGL ES 2.0 and and OpenGL 4.5 core profile, with tools and tutorials for using it in C and C++.
 
 ## Motivation
