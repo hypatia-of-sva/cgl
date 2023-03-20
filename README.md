@@ -24,7 +24,7 @@ reasons for me encouraging this? There are at least two different ones:
 - On the one hand, the technical reason of compatibility, portability and, even when only wanting to write for desktop, performance (in comparison to
 using a compatibility context).
 - On the other hand the aesthetical reason of reduced complexity. Even if you really don't need broad compatibility, and using Vulkan would be just as good,
-vou can't beat old OpenGL in its simplicity with the newer APIs. There are just a lot more moving pieces in Vulkan: Command Buffers, Descriptor Sets,
+you can't beat old OpenGL in its simplicity with the newer APIs. There are just a lot more moving pieces in Vulkan: Command Buffers, Descriptor Sets,
 Pipelines, Device Handles etc. etc. Common OpenGL really only has shaders/programs, with uniforms and vertex attributes, and buffers and textures to bind
 to them, plus a few fixed functions for blend and stencil operations and things like `glCullFace`. Being under 150 functions, it's easier to learn and master,
 and gives a lot more space for the actual decision making. Simplicity breeds creativity, and for a creative endeavour such as computer graphics I think
