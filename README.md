@@ -4,7 +4,7 @@ Common OpenGL (CGL) - Description of the commen subset of OpenGL 2.1, OpenGL ES 
 ## Motivation
 
 One of the main problems with using OpenGL is the version difference between various OpenGL distributions, between older OpenGL 2 iGPUs
-and modern graphics cards as well as mobile and embedded systems, that are usually addressed with OpenGL ES and sometimes still only have OpenGL ES 2.0.
+and modern OpenGL 4.X / Vulkan graphics cards for PC and console, as well as mobile and embedded systems, that are usually addressed with OpenGL ES and sometimes still only have OpenGL ES 2.0.
 
 This, however, is mostly a problem of tools and documentation, not of the API itself. Moreover, for smaller projects, OpenGL 2 is quite usable and usually
 fast enough.
