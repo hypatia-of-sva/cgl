@@ -312,3 +312,267 @@ assigned gets:
 
 
 
+
+
+glBlendFunc — specify pixel arithmetic
+    void glBlendFunc(GLenum sfactor, GLenum dfactor);
+
+sfactor:
+     Specifies how the red, green, blue, and alpha source blending factors are computed. The following symbolic constants are accepted: GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, and GL_SRC_ALPHA_SATURATE. The initial value is GL_ONE.
+
+dfactor:
+    Specifies how the red, green, blue, and alpha destination blending factors are computed. The following symbolic constants are accepted: GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA. GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, and GL_ONE_MINUS_CONSTANT_ALPHA. The initial value is GL_ZERO.
+
+(In RGBA mode,)[only GL 2.1] Pixels can be drawn using a function that blends the incoming (source) RGBA values with the RGBA values that are already in the frame buffer (the destination values). Blending is initially disabled. Use glEnable and glDisable with argument GL_BLEND to enable and disable blending.
+
+glBlendFunc defines the operation of blending when it is enabled. sfactor specifies which method is used to scale the source color components. dfactor specifies which method is used to scale the destination color components. The possible methods are described in the following table. Each method defines four scale factors, one each for red, green, blue, and alpha. In the table and in subsequent equations, source and destination color components are referred to as (Rs, Gs, Bs, As) and (Rd, Gd, Bd, Ad). The color specified by glBlendColor is referred to as (Rc, Gc, Bc, Ac). They are understood to have integer values between 0 and (kR, kG, kB, kA), where
+
+kc = 2^mc - 1
+
+and (mR, mG, mB, mA) is the number of red, green, blue, and alpha bitplanes.
+
+Source and destination scale factors are referred to as (sR, sG, sB, sA) and dR dG dB dA. The scale factors described in the table, denoted (fR, fG, fB, fA), represent either source or destination factors. All scale factors have range [0, 1].
+
+Parameter 	                     (fR, fG, fB, fA)
+GL_ZERO 	                     (0, 0, 0, 0)
+GL_ONE 	                         (1, 1, 1, 1)
+GL_SRC_COLOR 	                 (Rs/kR, Gs/kG, Bs/kB, As/kA)
+GL_ONE_MINUS_SRC_COLOR 	         (1, 1, 1, 1) - (Rs/kR, Gs/kG, Bs/kB, As/kA)
+GL_DST_COLOR 	                 (Rd/kR, Gd/kG, Bd/kB, Ad/kA)
+GL_ONE_MINUS_DST_COLOR 	         (1, 1, 1, 1) - (Rd/kR, Gd/kG, Bd/kB, Ad/kA)
+GL_SRC_ALPHA 	                 (As/kA, As/kA, As/kA, As/kA)
+GL_ONE_MINUS_SRC_ALPHA 	         (1, 1, 1, 1) - (As/kA, As/kA, As/kA, As/kA)
+GL_DST_ALPHA 	                 (Ad/kA, Ad/kA, Ad/kA, Ad/kA)
+GL_ONE_MINUS_DST_ALPHA 	         (1, 1, 1, 1) - (Ad/kA, Ad/kA, Ad/kA, Ad/kA)
+GL_CONSTANT_COLOR 	             (Rc, Gc, Bc, Ac)
+GL_ONE_MINUS_CONSTANT_COLOR 	 (1, 1, 1, 1) - (Rc, Gc, Bc, Ac)
+GL_CONSTANT_ALPHA 	             (Ac, Ac, Ac, Ac)
+GL_ONE_MINUS_CONSTANT_ALPHA 	 (1, 1, 1, 1) - (Ac, Ac, Ac, Ac)
+GL_SRC_ALPHA_SATURATE 	         (i, i, i, 1)
+
+In the table,
+
+i = min(As, kA - Ad)/kA
+
+To determine the blended RGBA values of a pixel (when drawing in RGBA mode)[only GL 2.1], the system uses (one of the equations set by glBlendEquation or glBlendEquationSeparate.)[GL ES 2.0]/(the following equations: Rd = min(kR,(Rs*sR)+(Rd*dR)), Gd = min(kG,(Gs*sG)+(Gd*dG)), Bd=min(kB,(Bs*sB)+(Bd*dB)), Ad=min(kA,(As*sA)+(Ad*dA)))[GL 2.1, GL 4]
+
+(Despite the apparent precision of the above equations,)[omitted in GL ES 2.0] Blending arithmetic is not exactly specified, because blending operates with imprecise integer color values. However, a blend factor that should be equal to 1 is guaranteed not to modify its multiplicand, and a blend factor equal to 0 reduces its multiplicand to 0. (For example, when sfactor is GL_SRC_ALPHA, dfactor is GL_ONE_MINUS_SRC_ALPHA, and A s is equal to k A , the equations reduce to simple replacement: Rd = Rs, Gd = Gs, Bd = Bs, Ad = As)[omitted in GL ES 2.0]
+
+Examples
+
+Transparency is best implemented using blend function (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) with primitives sorted from farthest to nearest. Note that this transparency calculation does not require the presence of alpha bitplanes in the frame buffer.
+
+(Blend function (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) is also useful for rendering antialiased points and lines in arbitrary order.
+
+Polygon antialiasing is optimized using blend function (GL_SRC_ALPHA_SATURATE, GL_ONE) with polygons sorted from nearest to farthest. (See the glEnable, glDisable reference page and the GL_POLYGON_SMOOTH argument for information on polygon antialiasing.) Destination alpha bitplanes, which must be present for this blend function to operate correctly, store the accumulated coverage.)[omitted in GL ES 2.0]
+
+Notes
+
+Incoming (source) alpha is correctly thought of as a material opacity, ranging from 1.0 ( K A ), representing complete opacity, to 0.0 (0), representing complete transparency.
+
+(Blending affects only RGBA rendering. It is ignored by color index renderers.)[only GL 2.1]
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - either sfactor or dfactor is not an accepted value.
+
+associated gets:
+    glGet with argument GL_BLEND_SRC_RGB or GL_BLEND_SRC_ALPHA
+    glGet with argument GL_BLEND_SRC [only GL 2.1]
+    glGet with argument GL_BLEND_DST_RGB or GL_BLEND_DST_ALPHA
+    glGet with argument GL_BLEND_DST [only GL 2.1]
+    glIsEnabled with argument GL_BLEND
+
+
+
+
+
+
+
+
+glBlendFuncSeparate — specify pixel arithmetic for RGB and alpha components separately
+    void glBlendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
+
+srcRGB:
+    Specifies how the red, green, and blue blending factors are computed. The following symbolic constants are accepted: GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, and GL_SRC_ALPHA_SATURATE. The initial value is GL_ONE.
+
+dstRGB:
+    Specifies how the red, green, and blue destination blending factors are computed. The following symbolic constants are accepted: GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA. GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, and GL_ONE_MINUS_CONSTANT_ALPHA. The initial value is GL_ZERO.
+
+srcAlpha:
+    Specified how the alpha source blending factor is computed. The same symbolic constants are accepted as for srcRGB. The initial value is GL_ONE.
+
+dstAlpha:
+    Specified how the alpha destination blending factor is computed. The same symbolic constants are accepted as for dstRGB. The initial value is GL_ZERO.
+
+
+
+(In RGBA mode,)[only GL 2.1] Pixels can be drawn using a function that blends the incoming (source) RGBA values with the RGBA values that are already in the frame buffer (the destination values). Blending is initially disabled. Use glEnable and glDisable with argument GL_BLEND to enable and disable blending.
+
+glBlendFuncSeparate defines the operation of blending when it is enabled. srcRGB specifies which method is used to scale the source RGB-color components. dstRGB specifies which method is used to scale the destination RGB-color components. Likewise, srcAlpha specifies which method is used to scale the source alpha color component, and dstAlpha specifies which method is used to scale the destination alpha component. The possible methods are described in the following table. Each method defines four scale factors, one each for red, green, blue, and alpha.
+
+In the table and in subsequent equations, source and destination color components are referred to as (Rs, Gs, Bs, As) and (Rd, Gd, Bd, Ad). The color specified by glBlendColor is referred to as (Rc, Gc, Bc, Ac). They are understood to have integer values between 0 and (kR, kG, kB, kA), where
+
+kc = 2^mc - 1
+
+and (mR, mG, mB, mA) is the number of red, green, blue, and alpha bitplanes.
+
+Source and destination scale factors are referred to as (sR, sG, sB, sA) and dR dG dB dA. All scale factors have range [0, 1].
+
+Parameter 	                     RGB Factor 	                                   Alpha Factor
+GL_ZERO 	                     (0, 0, 0)                                         0
+GL_ONE 	                         (1, 1, 1)                                         1
+GL_SRC_COLOR 	                 (Rs/kR, Gs/kG, Bs/kB)                             As/kA
+GL_ONE_MINUS_SRC_COLOR 	         (1, 1, 1) - (Rs/kR, Gs/kG, Bs/kB)                 1 - As/kA
+GL_DST_COLOR 	                 (Rd/kR, Gd/kG, Bd/kB)                             Ad/kA
+GL_ONE_MINUS_DST_COLOR 	         (1, 1, 1) - (Rd/kR, Gd/kG, Bd/kB)                 1 - Ad/kA
+GL_SRC_ALPHA 	                 (As/kA, As/kA, As/kA)                             As/kA
+GL_ONE_MINUS_SRC_ALPHA 	         (1, 1, 1) - (As/kA, As/kA, As/kA)                 1 - As/kA
+GL_DST_ALPHA 	                 (Ad/kA, Ad/kA, Ad/kA)                             Ad/kA
+GL_ONE_MINUS_DST_ALPHA 	         (1, 1, 1) - (Ad/kA, Ad/kA, Ad/kA)                 1 - Ad/kA
+GL_CONSTANT_COLOR 	             (Rc, Gc, Bc)                                      Ac
+GL_ONE_MINUS_CONSTANT_COLOR 	 (1, 1, 1) - (Rc, Gc, Bc)                          1 - Ac
+GL_CONSTANT_ALPHA 	             (Ac, Ac, Ac)                                      Ac
+GL_ONE_MINUS_CONSTANT_ALPHA 	 (1, 1, 1) - (Ac, Ac, Ac)                          1 - Ac
+GL_SRC_ALPHA_SATURATE 	         (i, i, i)                                         1
+
+In the table,
+
+i = min(As, kA - Ad)/kA
+
+To determine the blended RGBA values of a pixel (when drawing in RGBA mode)[only GL 2.1], the system uses (one of the equations set by glBlendEquation or glBlendEquationSeparate.)[GL ES 2.0]/(the following equations: Rd = min(kR,(Rs*sR)+(Rd*dR)), Gd = min(kG,(Gs*sG)+(Gd*dG)), Bd=min(kB,(Bs*sB)+(Bd*dB)), Ad=min(kA,(As*sA)+(Ad*dA)))[GL 2.1, GL 4]
+
+Despite the apparent precision of the above equations, blending arithmetic is not exactly specified, because blending operates with imprecise integer color values. However, a blend factor that should be equal to 1 is guaranteed not to modify its multiplicand, and a blend factor equal to 0 reduces its multiplicand to 0. (For example, when sfactor is GL_SRC_ALPHA, dfactor is GL_ONE_MINUS_SRC_ALPHA, and A s is equal to k A , the equations reduce to simple replacement: Rd = Rs, Gd = Gs, Bd = Bs, Ad = As)[omitted in GL ES 2.0]
+
+Notes
+
+Incoming (source) alpha is correctly thought of as a material opacity, ranging from 1.0 ( K A ), representing complete opacity, to 0.0 (0), representing complete transparency.
+
+(Blending affects only RGBA rendering. It is ignored by color index renderers.)[only GL 2.1]
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - srcRGB, dstRGB, srcAlpha, or dstAlpha is not an accepted value. [according to ref, GL 2.1 and GL 4 doesn't give an error for incorrect srcAlpha and dstAlpha]
+
+associated gets:
+    glGet with argument GL_BLEND_SRC_RGB
+    glGet with argument GL_BLEND_SRC_ALPHA
+    glGet with argument GL_BLEND_DST_RGB
+    glGet with argument GL_BLEND_DST_ALPHA
+    glIsEnabled with argument GL_BLEND
+
+
+
+
+
+
+
+
+
+
+
+glBufferData — create and initialize a buffer object's data store
+    void glBufferData(GLenum target, GLsizeiptr size, const void * data, GLenum usage);
+
+target:
+    Specifies the target buffer object. The symbolic constant must be GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER. Limitation as per GL ES 2.0
+
+size:
+    Specifies the size in bytes of the buffer object's new data store.
+
+data:
+    Specifies a pointer to data that will be copied into the data store for initialization, or NULL if no data is to be copied.
+
+usage:
+    Specifies the expected usage pattern of the data store. The symbolic constant must be GL_STREAM_DRAW, GL_STATIC_DRAW, or GL_DYNAMIC_DRAW. Limitation as per GL ES 2.0
+
+glBufferData creates a new data store for the buffer object currently bound to target. (While creating the new storage,)[GL ES 2.0] Any pre-existing data store is deleted. The new data store is created with the specified size in bytes and usage. If data is not NULL, the data store is initialized with data from this pointer. (In its initial state, the new data store is not mapped, it has a NULL mapped pointer, and its mapped access is GL_READ_WRITE.)[omitted in GL ES 2.0]
+
+usage is a hint to the GL implementation as to how a buffer object's data store will be accessed. This enables the GL implementation to make more intelligent decisions that may significantly impact buffer object performance. It does not, however, constrain the actual usage of the data store. usage can be broken down into two parts: first, the frequency of access (modification and usage), and second, the nature of that access. The frequency of access may be one of these:
+
+STREAM
+    The data store contents will be modified once and used at most a few times.
+
+STATIC
+    The data store contents will be modified once and used many times.
+
+DYNAMIC
+    The data store contents will be modified repeatedly and used many times.
+
+The nature of access must be: [Limitation as per GL ES 2.0]
+
+DRAW
+    The data store contents are modified by the application, and used as the source for GL drawing and image specification commands.
+
+
+Notes
+
+If data is NULL, a data store of the specified size is still created, but its contents remain uninitialized and thus undefined.
+
+Clients must align data elements consistent with the requirements of the client platform, with an additional base-level requirement that an offset within a buffer to a datum comprising N (bytes)[omitted in GL ES 2.0] be a multiple of N.
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - target is not GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER.
+        - usage is not GL_STREAM_DRAW, GL_STATIC_DRAW, or GL_DYNAMIC_DRAW.
+    GL_INVALID_VALUE is generated if
+        - size is negative.
+    GL_INVALID_OPERATION is generated if
+        - the reserved buffer object name 0 is bound to target.
+    GL_OUT_OF_MEMORY is generated if
+        - the GL is unable to create a data store with the specified size.
+
+associated gets:
+    glGetBufferSubData [omitted in GL ES 2.0]
+    glGetBufferParameteriv with argument GL_BUFFER_SIZE or GL_BUFFER_USAGE
+
+
+
+
+
+
+
+
+
+
+
+glBufferSubData — update a subset of a buffer object's data store
+    void glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void * data);
+
+target
+    Specifies the target buffer object. The symbolic constant must be GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER.
+
+offset
+    Specifies the offset into the buffer object's data store where data replacement will begin, measured in bytes.
+
+size
+    Specifies the size in bytes of the data store region being replaced.
+
+data
+    Specifies a pointer to the new data that will be copied into the data store.
+
+glBufferSubData redefines some or all of the data store for the buffer object currently bound to target. Data starting at byte offset offset and extending for size bytes is copied to the data store from the memory pointed to by data. An error is thrown if offset and size together define a range beyond the bounds of the buffer object's data store.
+
+Notes
+
+When replacing the entire data store, consider using glBufferSubData rather than completely recreating the data store with glBufferData. This avoids the cost of reallocating the data store.
+
+Consider using multiple buffer objects to avoid stalling the rendering pipeline during data store updates. If any rendering in the pipeline makes reference to data in the buffer object being updated by glBufferSubData, especially from the specific region being updated, that rendering must drain from the pipeline before the data store can be updated.
+
+Clients must align data elements consistent with the requirements of the client platform, with an additional base-level requirement that an offset within a buffer to a datum comprising N (bytes)[omitted in GL ES 2.0] be a multiple of N.
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - target is not GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER.
+    GL_INVALID_VALUE is generated if
+        - offset or size is negative, or if (together they define a region of memory that extends beyond the buffer object's allocated data store)[GL ES 2.0, GL 2.1]/(offset+size is greater than the value of GL_BUFFER_SIZE for the specified buffer object)[GL 4].
+    GL_INVALID_OPERATION is generated if
+        - the reserved buffer object name 0 is bound to target.
+        - if the buffer object being updated is mapped.  [only GL 2.1]
+        - GL_INVALID_OPERATION is generated if the value of the GL_BUFFER_IMMUTABLE_STORAGE flag of the buffer object is GL_TRUE and the value of GL_BUFFER_STORAGE_FLAGS for the buffer object does not have the GL_DYNAMIC_STORAGE_BIT bit set. [only GL 4]
+
+
+
+
+
+
