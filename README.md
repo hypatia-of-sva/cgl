@@ -9,7 +9,7 @@ and modern graphics cards as well as mobile and embedded systems, that are usual
 This, however, is mostly a problem of tools and documentation, not of the API itself. Moreover, for smaller projects, OpenGL 2 is quite usable and usually
 fast enough.
 
-The problem is, that if you search for OpenGL information, you will usually block yourself into a ceratain version, when really that is not necessary at
+The problem is, that if you search for OpenGL information, you will usually block yourself into a certain version, when really that is not necessary at
 all. For example: Using Framebuffers and Renderbuffers works in GL ES 2.0, but not in OpenGL 2.1. 1D and 3D Textures are available even before OpenGL 2.0,
 but are entirely missing in GL ES 2.0. And obviously there are many features of modern OpenGL, such as 3.2+ core profile, like VAO and UBO, that are not
 available on older platforms, and legacy features and OpenGL 2.1, such as glLight, that are not available in modern OpenGL core profile, and also not in
