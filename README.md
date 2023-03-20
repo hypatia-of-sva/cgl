@@ -12,7 +12,7 @@ fast enough.
 The problem is, that if you search for OpenGL information, you will usually block yourself into a certain version, when really that is not necessary at
 all. For example: Using Framebuffers and Renderbuffers works in GL ES 2.0, but not in OpenGL 2.1. 1D and 3D Textures are available even before OpenGL 2.0,
 but are entirely missing in GL ES 2.0. And obviously there are many features of modern OpenGL, such as 3.2+ core profile, like VAO and UBO, that are not
-available on older platforms, and legacy features and OpenGL 2.1, such as glLight, that are not available in modern OpenGL core profile, and also not in
+available on older platforms, and legacy features in OpenGL 2.1, such as glLight, that are not available in modern OpenGL core profile, and also not in
 GL ES 2.0.
 
 But those are only the obvious differences visible from the header file. The smaller differences, like: the possible modes of glBindBuffer etc., are very
