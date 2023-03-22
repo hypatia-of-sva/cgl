@@ -3078,3 +3078,350 @@ A name returned by glGenTextures, but not yet associated with a texture by calli
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+glLineWidth — specify the width of rasterized lines
+    void glLineWidth(GLfloat width);
+
+width:
+    Specifies the width of rasterized lines. The initial value is 1.
+
+glLineWidth specifies the rasterized width of (both aliased and antialiased)[omitted in GL ES 2.0] lines. (Using a line width other than 1 has different effects, depending on whether line antialiasing is enabled. To enable and disable line antialiasing, call glEnable and glDisable with argument GL_LINE_SMOOTH. Line antialiasing is initially disabled.)[omitted in GL ES 2.0]
+
+(If line antialiasing is disabled,)[omitted in GL ES 2.0] The actual width is determined by rounding the supplied width to the nearest integer. (If the rounding results in the value 0, it is as if the line width were 1.) If ∣Δx∣>=∣Δy∣ , i pixels are filled in each column that is rasterized, where i is the rounded value of width. Otherwise, i pixels are filled in each row that is rasterized.
+
+(If antialiasing is enabled, line rasterization produces a fragment for each pixel square that intersects the region lying within the rectangle having width equal to the current line width, length equal to the actual length of the line, and centered on the mathematical line segment. The coverage value for each fragment is the window coordinate area of the intersection of the rectangular region with the corresponding pixel square. This value is saved and used in the final rasterization step.)[omitted in GL ES 2.0]
+
+(There is a range of supported line widths. Only width 1 is guaranteed to be supported; others depend on the implementation. To query the range of supported widths, call glGet with argument GL_ALIASED_LINE_WIDTH_RANGE.)[GL ES 2.0]/(Not all widths can be supported when line antialiasing is enabled. If an unsupported width is requested, the nearest supported width is used. Only width 1 is guaranteed to be supported; others depend on the implementation. Likewise, there is a range for aliased line widths as well. To query the range of supported widths and the size difference between supported widths within the range, call glGet with arguments GL_ALIASED_LINE_WIDTH_RANGE, GL_SMOOTH_LINE_WIDTH_RANGE, and GL_SMOOTH_LINE_WIDTH_GRANULARITY.)[GL 2.1, GL 4]
+
+Notes
+
+The line width specified by glLineWidth is always returned when GL_LINE_WIDTH is queried. Clamping and rounding (for aliased and antialiased lines)[omitted in GL ES 2.0] have no effect on the specified value.
+
+(Nonantialiased)[omitted in GL ES 2.0] Line width may be clamped to an implementation-dependent maximum. Call glGet with GL_ALIASED_LINE_WIDTH_RANGE to determine the maximum width.
+
+(In OpenGL 1.2, the tokens GL_LINE_WIDTH_RANGE and GL_LINE_WIDTH_GRANULARITY were replaced by GL_ALIASED_LINE_WIDTH_RANGE, GL_SMOOTH_LINE_WIDTH_RANGE, and GL_SMOOTH_LINE_WIDTH_GRANULARITY. The old names are retained for backward compatibility, but should not be used in new code.)[omitted in GL ES 2.0]
+
+
+errors:
+    GL_INVALID_VALUE is generated if
+        - width is less than or equal to 0.
+
+associated gets:
+    glGet with argument GL_LINE_WIDTH
+    glGet with argument GL_ALIASED_LINE_WIDTH_RANGE
+    glGet with argument GL_SMOOTH_LINE_WIDTH_RANGE [GL 2.1, GL 4]
+    glGet with argument GL_SMOOTH_LINE_WIDTH_GRANULARITY [GL 2.1, GL 4]
+    glIsEnabled with argument GL_LINE_SMOOTH [GL 2.1, GL 4]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+glLinkProgram — link a program object
+    void glLinkProgram(GLuint program);
+
+program:
+    Specifies the handle of the program object to be linked.
+
+glLinkProgram links the program object specified by program. (A shader object of type GL_VERTEX_SHADER attached to program is)[GL ES 2.0]/(If any shader objects of type GL_VERTEX_SHADER are attached to program, they will be)[GL 2.1] used to create an executable that will run on the programmable vertex processor. (A shader object of type GL_FRAGMENT_SHADER attached to program is)[GL ES 2.0]/(If any shader objects of type GL_FRAGMENT_SHADER are attached to program, they will be)[GL 2.1] used to create an executable that will run on the programmable fragment processor.
+
+The status of the link operation will be stored as part of the program object's state. This value will be set to GL_TRUE if the program object was linked without errors and is ready for use, and GL_FALSE otherwise. It can be queried by calling glGetProgram[iv] with arguments program and GL_LINK_STATUS.
+
+As a result of a successful link operation, all active user-defined uniform variables belonging to program will be initialized to 0, and each of the program object's active uniform variables will be assigned a location that can be queried by calling glGetUniformLocation. Also, any active user-defined attribute variables that have not been bound to a generic vertex attribute index will be bound to one at this time.
+
+Linking of a program object can fail for a number of reasons as specified in the OpenGL [ES](GL ES 2.0 only) Shading Language Specification. The following lists some of the conditions that will cause a link error.
+
+    A vertex shader and a fragment shader are not both present in the program object. [GL ES 2.0 only]
+
+    The number of active attribute variables supported by the implementation has been exceeded.
+
+    The storage limit for uniform variables has been exceeded.
+
+    The number of active uniform variables supported by the implementation has been exceeded.
+
+    The main function is missing for the vertex shader or the fragment shader.
+
+    A varying variable actually used in the fragment shader is not declared in the same way (or is not declared at all) in the vertex shader.
+
+    A reference to a function or variable name is unresolved.
+
+    A shared global is declared with two different types or two different initial values.
+
+    One or more of the attached shader objects has not been successfully compiled ((via glCompileShader) or loaded with a pre-compiled shader binary (via glShaderBinary).)[GL ES 2.0 only]
+
+    Binding a generic attribute matrix caused some rows of the matrix to fall outside the allowed maximum of GL_MAX_VERTEX_ATTRIBS.
+
+    Not enough contiguous vertex attribute slots could be found to bind attribute matrices.
+
+    (The program object contains objects to form a fragment shader but does not contain objects to form a vertex shader.
+
+    The program object contains objects to form a geometry shader but does not contain objects to form a vertex shader.
+
+    The program object contains objects to form a geometry shader and the input primitive type, output primitive type, or maximum output vertex count is not specified in any compiled geometry shader object.
+
+    The program object contains objects to form a geometry shader and the input primitive type, output primitive type, or maximum output vertex count is specified differently in multiple geometry shader objects.
+
+    The number of active outputs in the fragment shader is greater than the value of GL_MAX_DRAW_BUFFERS.
+
+    The program has an active output assigned to a location greater than or equal to the value of GL_MAX_DUAL_SOURCE_DRAW_BUFFERS and has an active output assigned an index greater than or equal to one.
+
+    More than one varying out variable is bound to the same number and index.
+
+    The explicit binding assigments do not leave enough space for the linker to automatically assign a location for a varying out array, which requires multiple contiguous locations.
+
+    The count specified by glTransformFeedbackVaryings is non-zero, but the program object has no vertex or geometry shader.
+
+    Any variable name specified to glTransformFeedbackVaryings in the varyings array is not declared as an output in the vertex shader (or the geometry shader, if active).
+
+    Any two entries in the varyings array given glTransformFeedbackVaryings specify the same varying variable.
+
+    The total number of components to capture in any transform feedback varying variable is greater than the constant GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS and the buffer mode is GL_SEPARATE_ATTRIBS.)[GL 4 only]
+
+When a program object has been successfully linked, the program object can be made part of current state by calling glUseProgram. Whether or not the link operation was successful, the program object's information log will be overwritten. The information log can be retrieved by calling glGetProgramInfoLog.
+
+glLinkProgram will also install the generated executables as part of the current rendering state if the link operation was successful and the specified program object is already currently in use as a result of a previous call to glUseProgram. If the program object currently in use is relinked unsuccessfully, its link status will be set to GL_FALSE , but the executables and associated state will remain part of the current state until a subsequent call to glUseProgram removes it from use. After it is removed from use, it cannot be made part of current state until it has been successfully relinked.
+
+(If program contains shader objects of type GL_VERTEX_SHADER but does not contain shader objects of type GL_FRAGMENT_SHADER, the vertex shader will be linked against the implicit interface for fixed functionality fragment processing. Similarly, if program contains shader objects of type GL_FRAGMENT_SHADER but it does not contain shader objects of type GL_VERTEX_SHADER, the fragment shader will be linked against the implicit interface for fixed functionality vertex processing.)[GL 2.1]/(If program contains shader objects of type GL_VERTEX_SHADER, and optionally of type GL_GEOMETRY_SHADER, but does not contain shader objects of type GL_FRAGMENT_SHADER, the vertex shader executable will be installed on the programmable vertex processor, the geometry shader executable, if present, will be installed on the programmable geometry processor, but no executable will be installed on the fragment processor. The results of rasterizing primitives with such a program will be undefined.) [GL 4]
+
+The program object's information log is updated and the program is generated at the time of the link operation. After the link operation, applications are free to modify attached shader objects, compile attached shader objects, detach shader objects, delete shader objects, and attach additional shader objects. None of these operations affects the information log or the program that is part of the program object.
+
+Notes
+
+If the link operation is unsuccessful, any information about a previous link operation on program is lost (i.e., a failed link does not restore the old state of program). Certain information can still be retrieved from program even after an unsuccessful link operation. See for instance glGetActiveAttrib and glGetActiveUniform.
+
+errors:
+    GL_INVALID_VALUE is generated if
+        - program is not a value generated by OpenGL.
+    GL_INVALID_OPERATION is generated if
+        - program is not a program object.
+    GL_INVALID_OPERATION is generated if
+        - program is the currently active program object and transform feedback mode is active. [GL 4 only]
+
+
+associated gets:
+    glGet with the argument GL_CURRENT_PROGRAM
+    glGetActiveAttrib with argument program and the index of an active attribute variable
+    glGetActiveUniform with argument program and the index of an active uniform variable
+    glGetAttachedShaders with argument program
+    glGetAttribLocation with argument program and an attribute variable name
+    glGetProgram[iv] with arguments program and GL_LINK_STATUS
+    glGetProgramInfoLog with argument program
+    glGetUniform with argument program and a uniform variable location
+    glGetUniformLocation with argument program and a uniform variable name
+    glIsProgram
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+glPixelStore[i] — set pixel storage modes
+    void glPixelStorei(GLenum pname, GLint param);
+
+pname:
+    Specifies the symbolic name of the parameter to be set. One value affects the packing of pixel data into memory: GL_PACK_ALIGNMENT. The other affects the unpacking of pixel data from memory: GL_UNPACK_ALIGNMENT. Limitation as per GL ES 2.0
+
+param:
+    Specifies the value that pname is set to.
+
+glPixelStore[i] sets pixel storage modes that affect the operation of subsequent glReadPixels as well as the unpacking of texture patterns (see glTexImage2D and glTexSubImage2D).
+
+pname is a symbolic constant indicating the parameter to be set, and param is the new value. One storage parameter affects how pixel data is returned to client memory:
+
+GL_PACK_ALIGNMENT
+    Specifies the alignment requirements for the start of each pixel row in memory. The allowable values are 1 (byte-alignment), 2 (rows aligned to even-numbered bytes), 4 (word-alignment), and 8 (rows start on double-word boundaries).
+
+The other storage parameter affects how pixel data is read from client memory:
+
+GL_UNPACK_ALIGNMENT
+    Specifies the alignment requirements for the start of each pixel row in memory. The allowable values are 1 (byte-alignment), 2 (rows aligned to even-numbered bytes), 4 (word-alignment), and 8 (rows start on double-word boundaries).
+
+The following table gives the type, initial value, and range of valid values for each storage parameter that can be set with glPixelStorei.
+
+pname               Type        Initial Value       Valid Range
+GL_PACK_ALIGNMENT   integer     4                   1, 2, 4, or 8
+GL_UNPACK_ALIGNMENT integer     4                   1, 2, 4, or 8
+
+Boolean parameters are set to false if param is 0 and true otherwise.
+
+Notes:
+
+(The pixel storage modes in effect when glDrawPixels, glReadPixels, glTexImage1D, glTexImage2D, glTexImage3D, glTexSubImage1D, glTexSubImage2D, glTexSubImage3D, glBitmap, or glPolygonStipple is placed in a display list control the interpretation of memory data. Likewise, if the ARB_imaging extension is supported, the pixel storage modes in effect when glColorTable, glColorSubTable, glConvolutionFilter1D, glConvolutionFilter2D, of glSeparableFilter2D is placed in a display list control the interpretation of memory data. The pixel storage modes in effect when a display list is executed are not significant.
+
+Pixel storage modes are client state and must be pushed and restored using glPushClientAttrib and glPopClientAttrib. )[GL 2.1 only]
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - pname is not an accepted value.
+    GL_INVALID_VALUE is generated if
+        - alignment is specified as other than 1, 2, 4, or 8.
+
+associated gets:
+    glGet with argument GL_PACK_ALIGNMENT or GL_UNPACK_ALIGNMENT
+
+
+
+
+
+
+
+
+glPolygonOffset — set the scale and units used to calculate depth values
+    void glPolygonOffset(GLfloat factor, GLfloat units);
+
+factor:
+    Specifies a scale factor that is used to create a variable depth offset for each polygon. The initial value is 0.
+
+units:
+    Is multiplied by an implementation-specific value to create a constant depth offset. The initial value is 0.
+
+When GL_POLYGON_OFFSET_FILL(, GL_POLYGON_OFFSET_LINE, or GL_POLYGON_OFFSET_POINT)[omitted in GL ES 2.0] is enabled, each fragment's depth value will be offset after it is interpolated from the depth values of the appropriate vertices. The value of the offset is factor*DZ + r*units , where DZ is a measurement of the change in depth relative to the screen area of the polygon, and r is the smallest value that is guaranteed to produce a resolvable offset for a given implementation. The offset is added before the depth test is performed and before the value is written into the depth buffer.
+
+glPolygonOffset is useful for rendering hidden-line images, for applying decals to surfaces, and for rendering solids with highlighted edges.
+
+Notes:
+
+(glPolygonOffset has no effect on depth coordinates placed in the feedback buffer.
+
+glPolygonOffset has no effect on selection.)[GL 2.1 only]
+
+associated gets:
+    glIsEnabled with argument GL_POLYGON_OFFSET_FILL. (, GL_POLYGON_OFFSET_LINE, or GL_POLYGON_OFFSET_POINT.)[omitted in GL ES 2.0]
+    glGet with argument GL_POLYGON_OFFSET_FACTOR or GL_POLYGON_OFFSET_UNITS.
+
+
+
+
+
+
+
+
+glReadPixels — read a block of pixels from the frame buffer
+    void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void * data);
+
+x, y:
+    Specify the window coordinates of the first pixel that is read from the frame buffer. This location is the lower left corner of a rectangular block of pixels.
+
+width, height:
+    Specify the dimensions of the pixel rectangle. width and height of one correspond to a single pixel.
+
+format:
+    Specifies the format of the pixel data. The following symbolic values are accepted: GL_RGB, and GL_RGBA. Limitation as per GL ES 2.0 and GL 4
+
+type:
+    Specifies the data type of the pixel data. Must be one of GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, or GL_UNSIGNED_SHORT_5_5_5_1. Limitation as per GL ES 2.0
+
+data:
+    Returns the pixel data.
+
+glReadPixels returns pixel data from the frame buffer, starting with the pixel whose lower left corner is at location (x, y), into client memory starting at location data. (The GL_PACK_ALIGNMENT parameter, set with the glPixelStorei command, affects the processing of the pixel data before it is placed into client memory.)[GL ES 2.0]/(Several parameters control the processing of the pixel data before it is placed into client memory. These parameters are set with (three commands: glPixelStore, glPixelTransfer, and glPixelMap)[GL 2.1]/(glPixelStore)[GL 4]. This reference page describes the effects on glReadPixels of most, but not all of the parameters specified by these three commands.
+
+If a non-zero named buffer object is bound to the GL_PIXEL_PACK_BUFFER target (see glBindBuffer) while a block of pixels is requested, data is treated as a byte offset into the buffer object's data store rather than a pointer to client memory.)[GL 2.1, GL 4]
+
+(When the ARB_imaging extension is supported, the pixel data may be processed by additional operations including color table lookup, color matrix transformations, convolutions, histograms, and minimum and maximum pixel value computations.)[GL 2.1 only]
+
+glReadPixels returns values from each pixel with lower left corner at (x + i, y + j) for 0 <= i < width and 0 <= j < height . This pixel is said to be the ith pixel in the jth row. Pixels are returned in row order from the lowest to the highest row, left to right in each row.
+
+format specifies the format for the returned pixel values; accepted values are:
+
+
+GL_RGB
+GL_RGBA
+    (( Processing differs depending on whether color buffers store color indices or RGBA color components. If color indices are stored, they are read from the color buffer selected by glReadBuffer. Each index is converted to fixed point, shifted left or right depending on the value and sign of GL_INDEX_SHIFT, and added to GL_INDEX_OFFSET. Indices are then replaced by the red, green, blue, and alpha values obtained by indexing the tables GL_PIXEL_MAP_I_TO_R, GL_PIXEL_MAP_I_TO_G, GL_PIXEL_MAP_I_TO_B, and GL_PIXEL_MAP_I_TO_A. Each table must be of size 2 n , but n may be different for different tables. Before an index is used to look up a value in a table of size 2 n , it must be masked against 2 n - 1 . )[omitted in GL ES 2.0]
+
+    (If)[Omitted in GL ES 2.0] RGBA color components (are stored in the color buffers, they)[omitted in GL ES 2.0] are read from the color buffer (selected by glReadBuffer)[omitted in GL ES 2.0]. Each color component is converted to floating point such that zero intensity maps to 0.0 and full intensity maps to 1.0. (Each component is then multiplied by GL_c_SCALE and added to GL_c_BIAS, where c is RED, GREEN, BLUE, or ALPHA. Finally, if GL_MAP_COLOR is GL_TRUE, each component is clamped to the range 0 1 , scaled to the size of its corresponding table, and is then replaced by its mapping in the table GL_PIXEL_MAP_c_TO_c, where c is R, G, B, or A)[Omitted in GL ES 2.0]
+
+    Unneeded data is then discarded. For example, GL_RGB discards only the alpha component. The final values are clamped to the range 0 1 .)[GL ES 2.0, GL 2.1]/(Color values are taken from the color buffer.)[GL 4]
+
+(The shift, scale, bias, and lookup factors just described are all specified by glPixelTransfer. The lookup table contents themselves are specified by glPixelMap.)[GL 2.1 only]
+
+Finally, the components are converted to the proper format, as specified by type. When type is GL_UNSIGNED_BYTE, each component is multiplied by 2^8 - 1 . When type is GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, or GL_UNSIGNED_SHORT_5_5_5_1, each component is multiplied by 2^N - 1 , where N is the number of bits in the bitfield. [This is per GL ES 2.0; GL 2.1 and GL 4 has (2^8 - 1)c for GL_UNSIGNED_BYTE and (2^16 - 1)c for GL_UNSIGNED_SHORT, and GL 4 (2^N - 1)c for the GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4 and GL_UNSIGNED_SHORT_5_5_5_1 types, with 2^N - 1 set at the index mask for the GL_STENCIL_INDEX, unavailable in GL ES 2.0]
+
+Return values are placed in memory as follows. GL_RGB returns three values and GL_RGBA returns four values for each pixel, with all values corresponding to a single pixel occupying contiguous space in data. Storage parameter GL_PACK_ALIGNMENT, set by glPixelStore[i], affects the way that data is written into memory. See glPixelStore[i] for a description.
+
+Notes
+
+(If the currently bound framebuffer is not the default framebuffer object, color components are read from the color image attached to the GL_COLOR_ATTACHMENT0 attachment point.
+
+Only two format/type parameter pairs are accepted. GL_RGBA/GL_UNSIGNED_BYTE is always accepted, and the other acceptable pair can be discovered by querying GL_IMPLEMENTATION_COLOR_READ_FORMAT and GL_IMPLEMENTATION_COLOR_READ_TYPE.)[GL ES 2.0 only] [because not admissable for general glGet, this only leaves the default GL_RGBA + GL_UNSIGNED_BYTE as practicaly usable!]
+
+Values for pixels that lie outside the window connected to the current GL context are undefined.
+
+If an error is generated, no change is made to the contents of data.
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - format or type is not an accepted value.
+    GL_INVALID_VALUE is generated if
+        - either width or height is negative.
+    GL_INVALID_OPERATION is generated if
+        - type is GL_UNSIGNED_SHORT_5_6_5 and format is not GL_RGB.
+        - type is GL_UNSIGNED_SHORT_4_4_4_4 or GL_UNSIGNED_SHORT_5_5_5_1 and format is not GL_RGBA.
+        - format and type are neither GL_RGBA and GL_UNSIGNED_BYTE, respectively, nor the format/type pair returned by querying GL_IMPLEMENTATION_COLOR_READ_FORMAT and GL_IMPLEMENTATION_COLOR_READ_TYPE. [GL ES 2.0 only]
+        (- a non-zero buffer object name is bound to the GL_PIXEL_PACK_BUFFER target and the buffer object's data store is currently mapped.
+        - a non-zero buffer object name is bound to the GL_PIXEL_PACK_BUFFER target and the data would be packed to the buffer object such that the memory writes required would exceed the data store size.
+        - a non-zero buffer object name is bound to the GL_PIXEL_PACK_BUFFER target and data is not evenly divisible into the number of bytes needed to store in memory a datum indicated by type.)[GL 2.1, GL 4]
+        - GL_READ_FRAMEBUFFER_BINDING is non-zero, the read framebuffer is complete, and the value of GL_SAMPLE_BUFFERS for the read framebuffer is greater than zero. [GL 4 only]
+    GL_INVALID_FRAMEBUFFER_OPERATION is generated if
+        - the currently bound framebuffer is not framebuffer complete (i.e. the return value from glCheckFramebufferStatus is not GL_FRAMEBUFFER_COMPLETE). [GL ES 2.0 only]
+
+associated gets:
+    glGet with argument GL_IMPLEMENTATION_COLOR_READ_FORMAT or GL_IMPLEMENTATION_COLOR_READ_TYPE [GL ES 2.0 only]
+    glGet with argument GL_PACK_ALIGNMENT  [GL ES 2.0 only]
+    glGet with argument GL_INDEX_MODE [GL 2.1]
+    glGet with argument GL_PIXEL_PACK_BUFFER_BINDING [GL 2.1]
+
+
+
+
+
