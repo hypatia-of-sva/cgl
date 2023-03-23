@@ -3952,3 +3952,367 @@ associated gets:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+glTexImage2D — specify a two-dimensional texture image
+    void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height,
+        GLint border, GLenum format, GLenum type, const void * data);
+
+target:
+    Specifies the target texture (of the active texture unit)[GL ES 2.0 only]. Must be GL_TEXTURE_2D, GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z. Limitation as per GL ES 2.0
+
+level:
+    Specifies the level-of-detail number. Level 0 is the base image level. Level n is the nth mipmap reduction image.
+
+internalformat:
+    Specifies the (internal format of)[GL ES 2.0]/(number of color components in)[GL 2.1, GL 4] the texture. Must be one of the following symbolic constants: GL_RGB, GL_RGBA. Limitation as  per GL ES 2.0 and GL 4
+
+width:
+    Specifies the width of the texture image (including the border if any)[GL 2.1 only]. (If the GL version does not support non-power-of-two sizes, this value must be 2 n + 2 ⁡ border for some integer n.)[GL 2.1 only] All implementations support (2D)[GL ES 2.0 only] texture images that are at least 64 texels wide (and cube-mapped texture images that are at least 16 texels wide)[GL ES 2.0 only].
+
+height:
+    Specifies the height of the texture image(including the border if any)[GL 2.1 only]. (If the GL version does not support non-power-of-two sizes, this value must be 2 m + 2 ⁡ border for some integer m.)[GL 2.1 only] All implementations support (2D)[GL ES 2.0 only] texture images that are at least 64 texels high (and cube-mapped texture images that are at least 16 texels high.)[GL ES 2.0 only]
+
+border:
+    Specifies the width of the border. Must be 0. Limitation as per GL ES 2.0 and GL 4
+
+format:
+    Specifies the format of the (texel)[GL ES 2.0]/(pixel)[GL 2.1] data. Must match internalformat. The following symbolic values are accepted: GL_RGB, GL_RGBA. Limitation as per GL ES 2.0
+
+type:
+    Specifies the data type of the (texel)[GL ES 2.0]/(pixel)[GL 2.1] data. The following symbolic values are accepted: GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, and GL_UNSIGNED_SHORT_5_5_5_1. Limitation as per GL ES 2.0
+
+data:
+    Specifies a pointer to the image data in memory.
+
+Texturing (maps a portion of a specified texture image onto each graphical primitive for which texturing is (active. Texturing is active when the current fragment shader or vertex shader makes use of built-in texture lookup functions.)[GL ES 2.0]/(enabled. To enable and disable two-dimensional texturing, call glEnable and glDisable with argument GL_TEXTURE_2D. To enable and disable texturing using cube-mapped texture, call glEnable and glDisable with argument GL_TEXTURE_CUBE_MAP.)[GL 2.1])[GL ES 2.0, GL 2.1]/(allows elements of an image array to be read by shaders.)[GL 4]
+
+To define texture images, call glTexImage2D. The arguments describe the parameters of the texture image, such as height, width, (width of the border,)[GL 2.1, GL 4] level-of-detail number (see glTexParameter), and (format)[GL ES 2.0]/(number of color components provided)[GL 2.1, GL 4]. The last three arguments describe how the image is represented in memory.(they are identical to the pixel formats used for glDrawPixels.)[GL 2.1 only]
+
+Data is read from data as a sequence of unsigned bytes or shorts, depending on type. (When type is GL_UNSIGNED_BYTE, each of the bytes is interpreted as one color component. When type is one of GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, or GL_UNSIGNED_SHORT_5_5_5_1, each unsigned short value is interpreted as containing all the components for a single texel, with the color components arranged according to format. Color components are treated as groups of one, two, three, or four values, again based on format. Groups of components are referred to as texels.
+
+width × height texels are read from memory, starting at location data. By default, these texels are taken from adjacent memory locations, except that after all width texels are read, the read pointer is advanced to the next four-byte boundary. The four-byte row alignment is specified by glPixelStorei with argument GL_UNPACK_ALIGNMENT, and it can be set to one, two, four, or eight bytes.) [GL ES 2.0]/(These values are grouped into sets of one, two, three, or four values, depending on format, to form elements. (Each data byte is treated as eight 1-bit elements, with bit ordering determined by GL_UNPACK_LSB_FIRST (see glPixelStore).
+
+If target is GL_TEXTURE_2D, GL_TEXTURE_RECTANGLE or one of the GL_TEXTURE_CUBE_MAP targets, data is read from data as a sequence of signed or unsigned bytes, shorts, or longs, or single-precision floating-point values, depending on type. These values are grouped into sets of one, two, three, or four values, depending on format, to form elements. Each data byte is treated as eight 1-bit elements, with bit ordering determined by GL_UNPACK_LSB_FIRST (see glPixelStore).
+
+If target is GL_TEXTURE_1D_ARRAY, data is interpreted as an array of one-dimensional images.)[GL 4 only]
+
+If a non-zero named buffer object is bound to the GL_PIXEL_UNPACK_BUFFER target (see glBindBuffer) while a texture image is specified, data is treated as a byte offset into the buffer object's data store.)[GL 2.1, GL 4]
+
+The first element corresponds to the lower left corner of the texture image. Subsequent elements progress left-to-right through the remaining texels in the lowest row of the texture image, and then in successively higher rows of the texture image. The final element corresponds to the upper right corner of the texture image.
+
+format determines the composition of each element in data. It can assume one of these symbolic values:
+
+GL_RGB
+    Each element is an RGB triple. The GL converts it to floating point and assembles it into an RGBA element by attaching 1 for alpha. Each component is then (multiplied by the signed scale factor GL_c_SCALE, added to the signed bias GL_c_BIAS, and)[GL 2.1 only] clamped to the range [0,1].((see glPixelTransfer).)[GL 2.1 only]
+
+GL_RGBA
+    Each element contains all four components. (The GL converts it to floating point, then)[GL ES 2.0 only] each component is (multiplied by the signed scale factor GL_c_SCALE, added to the signed bias GL_c_BIAS, and)[GL 2.1 only] clamped to the range [0,1]. ((see glPixelTransfer).)[GL 2.1 only]
+
+
+(Color components are converted to floating point based on the type. When type is GL_UNSIGNED_BYTE, each component is divided by 2 8 - 1 . When type is GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, or GL_UNSIGNED_SHORT_5_5_5_1, each component is divided by 2 N - 1 , where N is the number of bits in the bitfield.)[GL ES 2.0 only]
+
+((Refer to the glDrawPixels reference page for a description of the acceptable values for the type parameter.)[GL 2.1 only]
+
+If an application wants to store the texture at a certain resolution or in a certain format, it can request the resolution and format with internalFormat. The GL will choose an internal representation that closely approximates that requested by internalFormat, but it may not match exactly. (The representations specified by (GL_LUMINANCE, GL_LUMINANCE_ALPHA,)[GL 2.1]/(GL_RED, GL_RG,)[GL 4] GL_RGB, and GL_RGBA must match exactly. (The numeric values 1, 2, 3, and 4 may also be used to specify the above representations.)[GL 2.1 only])) [GL 2.1, GL 4]
+
+(internalformat may be one of the base internal formats shown in Table 1, below:
+[only the two relevant entries:]
+Base Internal Format 	  RGBA, Depth and Stencil Values 	    Internal Components
+[...]
+GL_RGB 	                  Red, Green, Blue 	                    R, G, B
+GL_RGBA 	              Red, Green, Blue, Alpha 	            R, G, B, A
+
+internalformat may also be one of the sized internal formats shown in Table 2, below:
+[...]
+Finally, internalformat may also be one of the generic or compressed texture formats shown in Table 3 below:
+[...]
+)[GL 4 only]
+
+(A one-component texture image uses only the red component of the RGBA color extracted from data. A two-component image uses the R and (A)[GL 2.1]/(G)[GL 4] values. A three-component image uses the R, G, and B values. A four-component image uses all of the RGBA components.
+
+(Depth textures can be treated as LUMINANCE, INTENSITY or ALPHA textures during texture filtering and application.)[GL 2.1 only] Image-based shadowing can be enabled by comparing texture r coordinates to depth texture values to generate a boolean result. See glTexParameter for details on texture comparison. )[GL 2.1, GL 4]
+
+
+Notes
+
+( The glPixelStore mode affects texture images.)[GL 4 only]
+
+(internalformat must match format. No conversion between formats is supported during texture image processing. type may be used as a hint to specify how much precision is desired, but a GL implementation may choose to store the texture array at any internal resolution it chooses.)[GL ES 2.0 only]
+
+data may be a null pointer. In this case, texture memory is allocated to accommodate a texture of width width and height height. You can then download subtextures to initialize this texture memory. The image is undefined if the user tries to apply an uninitialized portion of the texture image to a primitive.
+
+glTexImage2D specifies a two-dimensional (or cube-map texture)[GL ES 2.0 only] for the current texture unit, specified with glActiveTexture.
+
+(Texturing has no effect in color index mode.
+
+If the ARB_imaging extension is supported, RGBA elements may also be processed by the imaging pipeline. The following stages may be applied to an RGBA color before color component clamping to the range 0 1 :
+
+1. Color component replacement by the color table specified for
+    GL_COLOR_TABLE, if enabled. See glColorTable.
+2. Two-dimensional Convolution filtering, if enabled.
+    See glConvolutionFilter1D.
+    If a convolution filter changes the width of the texture (by processing with a GL_CONVOLUTION_BORDER_MODE of GL_REDUCE, for example), and the GL does not support non-power-of-two textures, the width must 2 n + 2 ⁡ border, for some integer n, and height must be 2 m + 2 ⁡ border , for some integer m, after filtering.
+3. RGBA components may be multiplied by GL_POST_CONVOLUTION_c_SCALE,
+    and added to GL_POST_CONVOLUTION_c_BIAS, if enabled. See glPixelTransfer.
+4. Color component replacement by the color table specified for
+    GL_POST_CONVOLUTION_COLOR_TABLE, if enabled. See glColorTable.
+5. Transformation by the color matrix.
+    See glMatrixMode.
+6. RGBA components may be multiplied by GL_POST_COLOR_MATRIX_c_SCALE,
+    and added to GL_POST_COLOR_MATRIX_c_BIAS, if enabled. See glPixelTransfer.
+7. Color component replacement by the color table specified for
+    GL_POST_COLOR_MATRIX_COLOR_TABLE, if enabled. See glColorTable.
+
+The texture image can be represented by the same data formats as the pixels in a glDrawPixels command, except that GL_STENCIL_INDEX cannot be used. glPixelStore and glPixelTransfer modes affect texture images in exactly the way they affect glDrawPixels.
+
+Non-power-of-two textures are supported if the GL version is 2.0 or greater, or if the implementation exports the GL_ARB_texture_non_power_of_two extension.)[GL 2.1 only]
+
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - target is not GL_TEXTURE_2D, GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z.
+        - format or type is not an accepted value. [GL ES 2.0 only]
+        - target is one of the six cube map 2D image targets and the width and height parameters are not equal.[GL 2.1, GL 4]
+        - type is not a type constant. [GL 2.1, GL 4]
+    GL_INVALID_VALUE is generated if
+        - target is one of the six cube map 2D image targets and the width and height parameters are not equal. [GL ES 2.0 only]
+        - level is less than 0.
+        - internalformat is not (an accepted format.)[GL ES 2.0]/(1, 2, 3, 4, or one of the accepted resolution and format symbolic constants.)[GL 2.1, GL 4]
+        - width or height is less than 0 or greater than (GL_MAX_TEXTURE_SIZE when target is GL_TEXTURE_2D or GL_MAX_CUBE_MAP_TEXTURE_SIZE when target is not GL_TEXTURE_2D.)[GL ES 2.0]/(2 + GL_MAX_TEXTURE_SIZE)[GL 2.1]/(GL_MAX_TEXTURE_SIZE)[GL 4]
+        - border is not 0.
+        - non-power-of-two textures are not supported and the width or height cannot be represented as 2 k + 2 ⁡ border for some integer value of k. [GL 2.1 only]
+    GL_INVALID_VALUE may be generated if
+        - level is greater than log_2(max) , where max is the returned value of (GL_MAX_TEXTURE_SIZE when target is GL_TEXTURE_2D or GL_MAX_CUBE_MAP_TEXTURE_SIZE when target is not GL_TEXTURE_2D.)[GL ES 2.0]/(GL_MAX_TEXTURE_SIZE)[GL 2.1, GL 4]
+    GL_INVALID_OPERATION is generated if
+        - format does not match internalformat. [GL ES 2.0 only]
+        - type is GL_UNSIGNED_SHORT_5_6_5 and format is not GL_RGB.
+        - type is GL_UNSIGNED_SHORT_4_4_4_4 or GL_UNSIGNED_SHORT_5_5_5_1 and format is not GL_RGBA.
+        (- a non-zero buffer object name is bound to the GL_PIXEL_UNPACK_BUFFER target and the buffer object's data store is currently mapped.
+        - a non-zero buffer object name is bound to the GL_PIXEL_UNPACK_BUFFER target and the data would be unpacked from the buffer object such that the memory reads required would exceed the data store size.
+        - a non-zero buffer object name is bound to the GL_PIXEL_UNPACK_BUFFER target and data is not evenly divisible into the number of bytes needed to store in memory a datum indicated by type.)[GL 2.1, GL 4]
+
+associated gets:
+    glGet with argument GL_MAX_TEXTURE_SIZE or GL_MAX_CUBE_MAP_TEXTURE_SIZE [GL ES 2.0]
+    glGetTexImage [GL 2.1, GL 4]
+    glIsEnabled with argument GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP [GL 2.1 only]
+    glGet with argument GL_PIXEL_UNPACK_BUFFER_BINDING [GL 2.1, GL 4]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+glTexParameter — set texture parameters
+    void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
+    void glTexParameteri(GLenum target, GLenum pname, GLint param);
+    void glTexParameterfv(GLenum target, GLenum pname, const GLfloat * params);
+    void glTexParameteriv(GLenum target, GLenum pname, const GLint * params);
+
+target:
+    Specifies the target texture (of the active texture unit)[GL ES 2.0 only], which must be either GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP; but GL_TEXTURE_CUBE_MAP _only_ for glTexParameterf/glTexParameteri, not glTexParameterfv/glTexParameteriv [that Limitation only present in GL 2.1]. Limitation as per GL ES 2.0 and GL 2.1
+
+pname:
+    Specifies the symbolic name of a (single-valued)[only written under glTexParameter[f,i] not [fv,iv]] texture parameter. pname can be one of the following: GL_TEXTURE_MIN_FILTER, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_WRAP_S, or GL_TEXTURE_WRAP_T. Limitation as per GL ES 2.0
+
+param:
+    Specifies the value of pname.
+
+params
+    Specifies a pointer to an array where the value (or values)[GL 2.1, GL 4] of pname are stored.
+
+(Texture mapping is a technique that applies an image onto an object's surface as if the image were a decal or cellophane shrink-wrap. The image is created in texture space, with an (s, t) coordinate system. A texture is a two-dimensional (or cube-mapped)[GL ES 2.0 only] image and a set of parameters that determine how samples are derived from the image.)[omitted in GL 4]
+
+glTexParameter assigns the value or values in params to the texture parameter specified as pname. target defines the target texture of the active texture unit, either GL_TEXTURE_2D or (GL_TEXTURE_CUBE_MAP)[GL ES 2.0 only; GL 2.1 has GL_TEXTURE_3D instead]. The following symbols are accepted in pname:
+
+GL_TEXTURE_MIN_FILTER
+    The texture minifying function is used whenever the (pixel being textured maps to an area greater than one texture element.)[GL ES 2.0, GL 2.1]/(level-of-detail function used when sampling from the texture determines that the texture should be minified.)[GL 4] There are six defined minifying functions. Two of them use (the nearest one or nearest four)[GL ES 2.0, GL 2.1]/(either the nearest texture elements or a weighted average of multiple)[GL 4] texture elements to compute the texture value. The other four use mipmaps.
+
+    A mipmap is an ordered set of arrays representing the same image at progressively lower resolutions. (If the texture has dimensions w × h , there are floor ⁡ log 2 ⁡ max ⁡ w h + 1 mipmap levels. The first mipmap level is the original texture, with dimensions w × h . Each subsequent mipmap level has dimensions max ⁡ 1 floor ⁡ w 2 i × max ⁡ 1 floor ⁡ h 2 i , where i is the mipmap level, until the final mipmap is reached, which has dimension 1 × 1 .
+
+    To define the mipmap levels, call glTexImage2D, glCompressedTexImage2D, or glCopyTexImage2D with the level argument indicating the order of the mipmaps. Level 0 is the original texture; level floor ⁡ log 2 ⁡ max ⁡ w h is the final 1 × 1 mipmap.)[GL ES 2.0]/(If the texture has dimensions 2^n × 2^m , there are max(⁡n, m) + 1 mipmaps. The first mipmap is the original texture, with dimensions 2^ n × 2^ m . Each subsequent mipmap has dimensions 2^(k-1) × 2 ^(l-1) , where 2^k × 2^l are the dimensions of the previous mipmap, until either k = 0 or l = 0 . At that point, subsequent mipmaps have dimension 1 × 2^(l - 1) or 2^(k - 1) × 1 until the final mipmap, which has dimension 1 × 1 . To define the mipmaps, call glTexImage1D, glTexImage2D, glTexImage3D, glCopyTexImage1D, or glCopyTexImage2D with the level argument indicating the order of the mipmaps. Level 0 is the original texture; level max(n,m) is the final 1 × 1 mipmap.)[GL 2.1, GL 4]
+
+    params supplies a function for minifying the texture as one of the following:
+
+    GL_NEAREST
+        Returns the value of the texture element that is nearest (in Manhattan distance) to the (center of the pixel being textured)[GL ES 2.0, GL 2.1]/(specified texture coordinates)[GL 4].
+
+    GL_LINEAR
+        Returns the weighted average of the four texture elements that are closest to the (center of the pixel being textured)[GL ES 2.0, GL 2.1]/(specified texture coordinates)[GL 4]. (These can include (border texture elements)[GL 2.1]/(items wrapped or repeated from other parts of a texture)[GL 4], depending on the values of GL_TEXTURE_WRAP_S and GL_TEXTURE_WRAP_T, and on the exact mapping. )[GL 2.1,m GL 4]
+
+    GL_NEAREST_MIPMAP_NEAREST
+        Chooses the mipmap that most closely matches the size of the pixel being textured and uses the GL_NEAREST criterion (the texture element (nearest to the center of the pixel)[GL ES 2.0, GL 2.1]/(closest to the specified texture coordinates)[GL 4]) to produce a texture value.
+
+    GL_LINEAR_MIPMAP_NEAREST
+        Chooses the mipmap that most closely matches the size of the pixel being textured and uses the GL_LINEAR criterion (a weighted average of the four texture elements that are closest to the (center of the pixel)[GL ES 2.0, GL 2.1]/(specified texture coordinates)[GL 4]) to produce a texture value.
+
+    GL_NEAREST_MIPMAP_LINEAR
+        Chooses the two mipmaps that most closely match the size of the pixel being textured and uses the GL_NEAREST criterion (the texture element (nearest to the center of the pixel)[GL ES 2.0, GL 2.1]/(closest to the specified texture coordinates)[GL 4]) to produce a texture value from each mipmap. The final texture value is a weighted average of those two values.
+
+    GL_LINEAR_MIPMAP_LINEAR
+        Chooses the two mipmaps that most closely match the size of the pixel being textured and uses the GL_LINEAR criterion (a weighted average of the (four)[omitted in GL 4] texture elements that are closest to the (center of the pixel)[GL ES 2.0, GL 2.1]/(specified texture coordinates)[GL 4]) to produce a texture value from each mipmap. The final texture value is a weighted average of those two values.
+
+    As more texture elements are sampled in the minification process, fewer aliasing artifacts will be apparent. While the GL_NEAREST and GL_LINEAR minification functions can be faster than the other four, they sample only one or (four)[GL ES 2.0, GL 2.1]/(multiple)[GL 4] texture elements to determine the texture value of the pixel being rendered and can produce moire patterns or ragged transitions. The initial value of GL_TEXTURE_MIN_FILTER is GL_NEAREST_MIPMAP_LINEAR.
+
+GL_TEXTURE_MAG_FILTER
+    The texture magnification function is used (when the pixel being textured maps to an area less than or equal to one texture element.)[GL ES 2.0, GL 2.1]/(whenever the level-of-detail function used when sampling from the texture determines that the texture should be magified)[GL 4]
+    It sets the texture magnification function to either GL_NEAREST or GL_LINEAR (see below). GL_NEAREST is generally faster than GL_LINEAR, but it can produce textured images with sharper edges because the transition between texture elements is not as smooth. The initial value of GL_TEXTURE_MAG_FILTER is GL_LINEAR.
+
+    GL_NEAREST
+        Returns the value of the texture element that is nearest (in Manhattan distance) to the (center of the pixel being textured.)[GL ES 2.0, GL 2.1]/(specified texture coordinates)[GL 4]
+    GL_LINEAR
+        Returns the weighted average of the (four)[omitted in GL 4] texture elements that are closest to the (center of the pixel being textured.)[GL ES 2.0, GL 2.1]/(specified texture coordinates)[GL 4]. (These can include (border texture elements)[GL 2.1]/(items wrapped or repeated from other parts of a texture)[GL 4], depending on the values of GL_TEXTURE_WRAP_S and GL_TEXTURE_WRAP_T, and on the exact mapping. )[GL 2.1, GL 4]
+
+GL_TEXTURE_WRAP_S
+    Sets the wrap parameter for texture coordinate s to either GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, or GL_REPEAT. Limitation as per GL ES 2.0. GL_CLAMP_TO_EDGE causes s coordinates to be clamped to the range [1/2N, 1 - 1/2N] , where N is the size of the texture in the direction of clamping. GL_REPEAT causes the integer part of the s coordinate to be ignored; the GL uses only the fractional part, thereby creating a repeating pattern. GL_MIRRORED_REPEAT causes the s coordinate to be set to the fractional part of the texture coordinate if the integer part of s is even; if the integer part of s is odd, then the s texture coordinate is set to 1 - frac(s) , where frac(s) represents the fractional part of s. Initially, GL_TEXTURE_WRAP_S is set to GL_REPEAT.
+
+GL_TEXTURE_WRAP_T
+    Sets the wrap parameter for texture coordinate t to either GL_CLAMP_TO_EDGE, GL_MIRRORED_REPEAT, or GL_REPEAT. Limitation as per GL ES 2.0 See the discussion under GL_TEXTURE_WRAP_S. Initially, GL_TEXTURE_WRAP_T is set to GL_REPEAT.
+
+Notes
+
+Suppose that a (texture is accessed from a fragment shader or vertex shader)[GL ES 2.0]/(program has enabled texturing (by calling glEnable with argument GL_TEXTURE_1D, GL_TEXTURE_2D, or GL_TEXTURE_3D))[GL 2.1]/(program attempts to sample from a texture)[GL 4] and has set GL_TEXTURE_MIN_FILTER to one of the functions that requires mipmaps. If either the dimensions of the texture images currently defined (with previous calls to glTexImage2D, (glCompressedTexImage2D)[GL ES 2.0 only], or glCopyTexImage2D) do not follow the proper sequence for mipmaps (described above), or there are fewer texture images defined than are needed, or the set of texture images (were defined with different formats or types, then the texture image unit will return (R, G, B, A) = (0, 0, 0, 1).)[GL ES 2.0]/(have differing numbers of texture components, (then it is as if texture mapping were disabled.)[GL 2.1]/(the texture is considered incomplete.)[GL 4])[GL 2.1, GL 4]
+
+(Similarly, if the width or height of a texture image are not powers of two and either the GL_TEXTURE_MIN_FILTER is set to one of the functions that requires mipmaps or the GL_TEXTURE_WRAP_S or GL_TEXTURE_WRAP_T is not set to GL_CLAMP_TO_EDGE, then the texture image unit will return (R, G, B, A) = (0, 0, 0, 1).)[GL ES 2.0]/(Linear filtering accesses the four nearest texture elements only in 2D textures. In 1D textures, linear filtering accesses the two nearest texture elements. (In 3D textures, linear filtering accesses the eight nearest texture elements.)[GL 4 only])[GL 2.1, GL 4]
+
+glTexParameter specifies the texture parameters for the (texture bound to the)[GL ES 2.0 only] active texture unit, specified by calling glActiveTexture.
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - target or pname is not one of the accepted defined values.
+        - params should have a defined symbolic constant value (based on the value of pname) and does not.
+
+associated gets:
+    glGetTexParameter
+    glGetTextureParameter [GL 4]
+    glGetTexLevelParameter [GL 4]
+    glGetTextureLevelParameter [GL 4]
+
+
+
+
+
+
+
+
+glTexSubImage2D — specify a two-dimensional texture subimage
+    void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+        GLenum format, GLenum type, const void * data);
+
+target:
+    Specifies the target (texture (of the active texture unit)[GL ES 2.0 only])[GL ES 2.0, GL 2.1]/(to which the texture is bound)[GL 4]. Must be GL_TEXTURE_2D, GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z.
+
+level:
+    Specifies the level-of-detail number. Level 0 is the base image level. Level n is the nth mipmap reduction image.
+
+xoffset:
+    Specifies a texel offset in the x direction within the texture array.
+
+yoffset:
+    Specifies a texel offset in the y direction within the texture array.
+
+width:
+    Specifies the width of the texture subimage.
+
+height:
+    Specifies the height of the texture subimage.
+
+format:
+    Specifies the format of the pixel data. The following symbolic values are accepted: GL_RGB and GL_RGBA. Limitation as per GL ES 2.0 and GL 4
+
+type:
+    Specifies the data type of the pixel data. The following symbolic values are accepted: GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT_5_6_5, GL_UNSIGNED_SHORT_4_4_4_4, and GL_UNSIGNED_SHORT_5_5_5_1.
+
+data:
+    Specifies a pointer to the image data in memory.
+
+Texturing maps a portion of a specified texture image onto each graphical primitive for which texturing is (active. Texturing is active when the current fragment shader or vertex shader makes use of built-in texture lookup functions.)[GL ES 2.0]/(enabled. (To enable and disable two-dimensional texturing, call glEnable and glDisable with argument GL_TEXTURE_2D.)[GL 2.1 only])[GL 2.1, GL 4]
+
+glTexSubImage2D redefines a contiguous subregion of an existing two-dimensional texture image. The texels referenced by data replace the portion of the existing texture array with x indices xoffset and xoffset + width - 1 , inclusive, and y indices yoffset and yoffset + height - 1 , inclusive. This region may not include any texels outside the range of the texture array as it was originally specified. It is not an error to specify a subtexture with zero width or height, but such a specification has no effect.
+
+(If a non-zero named buffer object is bound to the GL_PIXEL_UNPACK_BUFFER target (see glBindBuffer) while a texture image is specified, data is treated as a byte offset into the buffer object's data store.)[GL 2.1, GL 4]
+
+Notes
+
+(Storage parameter GL_UNPACK_ALIGNMENT, set by glPixelStorei, affects the way that data is read out of client memory. See glPixelStorei for a description.)[GL ES 2.0]/(Texturing has no effect in color index mode.
+
+glPixelStore and glPixelTransfer modes affect texture images in exactly the way they affect glDrawPixels.
+
+When the ARB_imaging extension is supported, the RGBA components specified in data may be processed by the imaging pipeline. See glTexImage1D for specific details. )[GL 2.1]/(glPixelStore modes affect texture images.)[GL 4]
+
+glTexSubImage2D specifies a two-dimensional (or cube-map)[GL ES 2.0 only] subtexture for the current texture unit, specified with glActiveTexture.
+
+errors:
+    GL_INVALID_ENUM is generated if
+        - target is not GL_TEXTURE_2D, GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, or GL_TEXTURE_CUBE_MAP_NEGATIVE_Z.
+        - format or type is not an accepted value.
+    GL_INVALID_VALUE is generated if
+        - level is less than 0.
+        - xoffset < 0 , xoffset + width > w , yoffset < 0 , or yoffset + height > h , where w is the width and h is the height of the texture image being modified. [GL ES 2.0 only]
+        - xoffset < - b , xoffset + width > w - b , yoffset < - b , or yoffset + height > h - b , where w is the GL_TEXTURE_WIDTH, h is the GL_TEXTURE_HEIGHT, and b is the border width of the texture image being modified. Note that w and h include twice the border width. [GL 2.1, GL 4]
+        - width or height is less than 0.
+    GL_INVALID_VALUE may be generated if
+        - level is greater than log_2(max), where max is the returned value of GL_MAX_TEXTURE_SIZE.
+    GL_INVALID_OPERATION is generated if
+        - the texture array has not been defined by a previous glTexImage2D (or glCopyTexImage2D)[GL ES 2.0 only] operation (whose internalformat matches the format of glTexSubImage2D)[GL ES 2.0 only].
+        - type is GL_UNSIGNED_SHORT_5_6_5 and format is not GL_RGB.
+        - type is GL_UNSIGNED_SHORT_4_4_4_4 or GL_UNSIGNED_SHORT_5_5_5_1 and format is not GL_RGBA.
+        (- a non-zero buffer object name is bound to the GL_PIXEL_UNPACK_BUFFER target and the buffer object's data store is currently mapped.
+        - a non-zero buffer object name is bound to the GL_PIXEL_UNPACK_BUFFER target and the data would be unpacked from the buffer object such that the memory reads required would exceed the data store size.
+        - a non-zero buffer object name is bound to the GL_PIXEL_UNPACK_BUFFER target and data is not evenly divisible into the number of bytes needed to store in memory a datum indicated by type.)[GL 2.1, GL 4]
+
+associated gets:
+    glGet with argument GL_MAX_TEXTURE_SIZE or GL_MAX_CUBE_MAP_TEXTURE_SIZE [GL ES 2.0]
+    glGetTexImage [GL 2.1, GL 4]
+    glIsEnabled with argument GL_TEXTURE_2D [GL 2.1 only]
+    glGet with argument GL_PIXEL_UNPACK_BUFFER_BINDING [GL 2.1, GL 4]
+
+
+
+
+
+
+
+
+
