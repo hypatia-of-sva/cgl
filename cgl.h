@@ -39,7 +39,7 @@
 #define CGLAD_H
 
 #ifdef __gl_h_
-#error OpenGL header already included, remove this include, glad already provides it
+#error OpenGL header already included, remove this include, the cgl header already provides it
 #endif
 #define __gl_h_
 
@@ -101,9 +101,14 @@ typedef GLADproc (* GLADloadproc)(const char *name);
  * but if you need something more specific, load the DLL yourself and supply a loader function
  * for that.
  *
+ * also, there is no return value since this is common GL, so the version information must
+ * not be explicitly made clear, and, if something fails, the pointers will be NULL anyway,
+ * so that's easy to check for the library user, and must be done regardless in case of loader
+ * error / bugs.
+ *
  * @param loader loader function that returns the function pointer
  */
-GLAPI int cgladLoadGLLoader(GLADloadproc loader);
+GLAPI void cglLoadGL(GLADloadproc loader);
 
 
 /* only those types that are actually used, also reduced from the khrplatform.h layer */
@@ -181,8 +186,8 @@ typedef GLsizeiptr     GLintptr;
 #define GL_TEXTURE29 0x84DD
 #define GL_TEXTURE30 0x84DE
 #define GL_TEXTURE31 0x84DF
-// = GL_TEXTUREi = GL_TEXTURE0 + i
-// maybe only have GL_TEXTURE0 as a fixed constant then?
+/* = GL_TEXTUREi = GL_TEXTURE0 + i
+ maybe only have GL_TEXTURE0 as a fixed constant then? */
 
 
 #define GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS 0x8B4D
@@ -649,7 +654,7 @@ GLAPI PFNGLCLEARCOLORPROC glad_glClearColor;
 typedef void (APIENTRYP PFNGLCLEARDEPTHPROC)(GLdouble depth);
 GLAPI PFNGLCLEARDEPTHPROC glad_glClearDepth;
 #define glClearDepth glad_glClearDepth
-// ???
+/* ??? */
 #define glClearDepthf glad_glClearDepth
 
 
@@ -907,7 +912,7 @@ GLAPI PFNGLDEPTHFUNCPROC glad_glDepthFunc;
 typedef void (APIENTRYP PFNGLDEPTHRANGEPROC)(GLdouble n, GLdouble f);
 GLAPI PFNGLDEPTHRANGEPROC glad_glDepthRange;
 #define glDepthRange glad_glDepthRange
-// ???
+/* ??? */
 #define glDepthRangef glad_glDepthRange
 
 
@@ -1392,6 +1397,7 @@ GLAPI PFNGLDELETESHADERPROC glad_glDeleteShader;
 typedef void (APIENTRYP PFNGLDETACHSHADERPROC)(GLuint program, GLuint shader);
 GLAPI PFNGLDETACHSHADERPROC glad_glDetachShader;
 #define glDetachShader glad_glDetachShader
+
 
 /*! @brief associate a generic vertex attribute index with a named attribute variable
  *
