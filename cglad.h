@@ -148,7 +148,8 @@
 #define GL_TRIANGLE_STRIP 0x0005
 #define GL_TRIANGLE_FAN 0x0006
 
-
+#define GL_UNSIGNED_BYTE 0x1401
+#define GL_UNSIGNED_SHORT 0x1403
 
 #define GL_CW 0x0900
 #define GL_CCW 0x0901
@@ -276,16 +277,126 @@ typedef void (APIENTRYP PFNGLENABLEPROC)(GLenum cap);
 GLAPI PFNGLENABLEPROC glad_glEnable;
 #define glEnable glad_glEnable
 
+/*! @brief block until all GL execution is complete
+ *
+ * wait until all previous GL commands are completed
+ * this can take an undetermined amount of time
+ *
+ * @errors none
+ *
+ * @ingroup general
+ */
 typedef void (APIENTRYP PFNGLFINISHPROC)(void);
 GLAPI PFNGLFINISHPROC glad_glFinish;
 #define glFinish glad_glFinish
 
+/*! @brief force execution of GL commands in finite time
+ *
+ * empty the various command buffers.
+ * this _should_ be done, according to the reference, whenever the application expects the issued commands
+ * to be done, like when waiting for user input, i.e. at the end of the rendering function.
+ * However, glFlush can return immediately. It does not wait for the other commands to be done,
+ * it merely issues that they _should_ be done about now.
+ *
+ * @errors none
+ *
+ * @ingroup general
+ */
 typedef void (APIENTRYP PFNGLFLUSHPROC)(void);
 GLAPI PFNGLFLUSHPROC glad_glFlush;
 #define glFlush glad_glFlush
 
 
-
+/*! @brief return the value or values of a selected parameter
+ *
+ * reads bool, int and float values. casts them as:
+ *      bool to int, float: keep GL_TRUE or GL_FALSE
+ *      int, float to bool: return (value != 0) or (value != 0.0)
+ *      int to float: standard casting
+ *      float to int: normally round to nearest;
+ *          but colors and normals map from [-1.0,1.0] to [MININT, MAXINT] in a linear mapping
+ * the following values are univerally readable:
+ * (the ones marked with + are not (directly) set by user operation, like glEnable or other)
+ * GL_ACTIVE_TEXTURE                    active texture unit, default GL_TEXTURE0 (glActiveTexture)
+ *+GL_ALIASED_LINE_WIDTH_RANGE          2 values: smallest and largest line width (glLineWidth)
+ * GL_ARRAY_BUFFER_BINDING              buffer name currently bound to GL_ARRAY_BUFFER, or 0 (glBindBuffer)
+ * GL_BLEND                             boolean if blending is enabled, default GL_FALSE (glBlendFunc)
+ * GL_BLEND_COLOR                       4 values: blend color components (glBlendColor)
+ * GL_BLEND_DST_ALPHA                   alpha-destination blend func, default GL_ZERO (glBlendFuncSeparate)
+ * GL_BLEND_DST_RGB                     rgb-destination blend func, Default GL_ZERO (glBlendFuncSeparate)
+ * GL_BLEND_EQUATION_ALPHA              alpha blend equation (glBlendEquationSeparate)
+ * GL_BLEND_EQUATION_RGB                rgb blend equation (glBlendEquationSeparate)
+ * GL_BLEND_SRC_ALPHA                   alpha-source blend func, default GL_ONE (glBlendFuncSeparate)
+ * GL_BLEND_SRC_RGB                     rgb-source blend func, default GL_ONE (glBlendFuncSeparate)
+ * GL_COLOR_CLEAR_VALUE                 4 values: clear color components (glClearColor)
+ * GL_COLOR_WRITEMASK                   4 bools: color component masks (glColorMask)
+ *+GL_COMPRESSED_TEXTURE_FORMATS        GL_NUM_COMPRESSED_TEXTURE_FORMATS values:
+ *                                        enum values describing available formats (glCompressedTexImage2D)
+ * GL_CULL_FACE                         boolean if culling is enabled, default GL_FALSE (glCullFace)
+ * GL_CULL_FACE_MODE                    enum, which faces should be culled, default GL_BACK (glCullFace)
+ * GL_CURRENT_PROGRAM                   currently active program name, or 0 (glUseProgram)
+ * GL_DEPTH_CLEAR_VALUE                 depth buffer clear value, default 1 (glClearDepth[f])
+ * GL_DEPTH_FUNC                        depth function, default GL_LESS (glDepthFunc)
+ * GL_DEPTH_RANGE                       2 values: near/far mappings for depth buffer (glDepthRange[f])
+ * GL_DEPTH_TEST                        boolean if depth testing is enabled, default GL_FALSE (glDepthFunc)
+ * GL_DEPTH_WRITEMASK                   bool: depth mask value, default GL_TRUE (glDepthMask)
+ * GL_DITHER                            boolean if dithering is enabled, default GL_TRUE
+ * GL_ELEMENT_ARRAY_BUFFER_BINDING      buffer name bound to GL_ELEMENT_ARRAY_BUFFER, or 0 (glBindBuffer)
+ * GL_LINE_WIDTH                        specified line width, default 1 (glLineWidth)
+ *+GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS  nr of tex.-units usable by fragment+vertex shader (glActiveTexture)
+ *+GL_MAX_CUBE_MAP_TEXTURE_SIZE         estimate of the largest supported cube-map texture (glTexImage2D)
+ *+GL_MAX_TEXTURE_IMAGE_UNITS           nr of texture units usable by the fragment shader (glActiveTexture)
+ *+GL_MAX_TEXTURE_SIZE                  estimate of the largest supported texture (glTexImage2D)
+ *+GL_MAX_VERTEX_ATTRIBS                nr of vec4-attribs usable by the vertex shader (glVertexAttrib)
+ *+GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS    nr of texture units usable by the vertex shader (glActiveTexture)
+ *+GL_MAX_VIEWPORT_DIMS                 2 values: maximum width and height of viewport (glViewport)
+ *+GL_NUM_COMPRESSED_TEXTURE_FORMATS    number of compressed formats, can be 0 (glCompressedTexImage2D)
+ * GL_PACK_ALIGNMENT                    alignment for writing pixels to memory, default 4 (glPixelStore[i])
+ * GL_POLYGON_OFFSET_FACTOR             scaling factor to calculate offset, default 0 (glPolygonOffset)
+ * GL_POLYGON_OFFSET_FILL               boolean, if offset is enabled, default GL_FALSE (glPolygonOffset)
+ * GL_POLYGON_OFFSET_UNITS              offset nr of units added, default 0 (glPolygonOffset)
+ *+GL_SAMPLE_BUFFERS                    nr of sample buffers of the frame buffer (glSampleCoverage)
+ * GL_SAMPLE_COVERAGE_INVERT            bool, if coverage is set to be inverted (glSampleCoverage)
+ * GL_SAMPLE_COVERAGE_VALUE             current sample coverage value (glSampleCoverage)
+ *+GL_SAMPLES                           int of the coverage mask size of the framebuffer (glSampleCoverage)
+ * GL_SCISSOR_BOX                       4 values: x, y, width and height of scissor box (glScissor)
+ * GL_SCISSOR_TEST                      boolean is scissoring is enabled, default GL_FALSE (glScissor)
+ * GL_STENCIL_BACK_FAIL                 action sfail for GL_BACK (glStencilOpSeparate)
+ * GL_STENCIL_BACK_FUNC                 function for stenctil test for GL_BACK (glStencilFuncSeparate)
+ * GL_STENCIL_BACK_PASS_DEPTH_FAIL      action dpfail for GL_BACK (glStencilOpSeparate)
+ * GL_STENCIL_BACK_PASS_DEPTH_PASS      action dppass for GL_BACK (glStencilOpSeparate)
+ * GL_STENCIL_BACK_REF                  ref value for stencil test for GL_BACK (glStencilFuncSeparate)
+ * GL_STENCIL_BACK_VALUE_MASK           value mask for stenctil test for GL_BACK (glStencilFuncSeparate)
+ * GL_STENCIL_BACK_WRITEMASK            bit mask for stencil testing for GL_BACK (glStencilMaskSeparate)
+ * GL_STENCIL_CLEAR_VALUE               stencil clear value, default 0 (glClearStencil)
+ * GL_STENCIL_FAIL                      action sfail for GL_FRONT (glStencilOpSeparate)
+ * GL_STENCIL_FUNC                      function for stenctil test for GL_FRONT (glStencilFuncSeparate)
+ * GL_STENCIL_PASS_DEPTH_FAIL           action dpfail for GL_FRONT (glStencilOpSeparate)
+ * GL_STENCIL_PASS_DEPTH_PASS           action dppass for GL_FRONT (glStencilOpSeparate)
+ * GL_STENCIL_REF                       ref value for stencil test for GL_FRONT (glStencilFuncSeparate)
+ * GL_STENCIL_TEST                      boolean if stenciling is enabled, default GL_FALSE (glStencilOp)
+ * GL_STENCIL_VALUE_MASK                value mask for stenctil test for GL_FRONT (glStencilFuncSeparate)
+ * GL_STENCIL_WRITEMASK                 bit mask for stencil testing for GL_FRONT (glStencilMaskSeparate)
+ *+GL_SUBPIXEL_BITS                     estimated number of bits of subpixel resolution, at least 4
+ * GL_TEXTURE_BINDING_2D                texture name currently bound to GL_TEXTURE_2D, or 0 (glBindTexture)
+ * GL_TEXTURE_BINDING_CUBE_MAP          texture name bound to GL_TEXTURE_CUBE_MAP, or 0 (glBindTexture)
+ * GL_UNPACK_ALIGNMENT                  alignment for reading pixels, default 4 (glPixelStore[i])
+ * GL_VIEWPORT                          4 values: x, y, width and height of the viewport (glViewport)
+ *
+ * so only values not also set by the user are:
+ *  GL_ALIASED_LINE_WIDTH_RANGE, GL_COMPRESSED_TEXTURE_FORMATS, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
+ *  GL_MAX_CUBE_MAP_TEXTURE_SIZE, GL_MAX_TEXTURE_IMAGE_UNITS, GL_MAX_TEXTURE_SIZE, GL_MAX_VERTEX_ATTRIBS,
+ *  GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, GL_MAX_VIEWPORT_DIMS, GL_NUM_COMPRESSED_TEXTURE_FORMATS,
+ *  GL_SAMPLE_BUFFERS, GL_SAMPLES, GL_SUBPIXEL_BITS
+ * the others are more there to keep track of what you already have done.
+ *
+ * @param pname parameter value to be returned, one out of the table above
+ * @param data returns value or values of the specified parameter by writing into the pointer
+ *
+ * @errors GL_INVALID_ENUM if @ref pname is not an accepted value
+ *
+ * @ingroup general
+ */
 typedef void (APIENTRYP PFNGLGETBOOLEANVPROC)(GLenum pname, GLboolean *data);
 GLAPI PFNGLGETBOOLEANVPROC glad_glGetBooleanv;
 #define glGetBooleanv glad_glGetBooleanv
@@ -300,12 +411,54 @@ GLAPI PFNGLGETINTEGERVPROC glad_glGetIntegerv;
 
 /*! @brief render primitives from array data
  *
+ * draws multiple primitives, starting from the index @ref first exactly @ref count elements long.
+ * it uses all enabled arrarys, GL ES 2.0 references glEnableVertexAttribArray aligned
+ * glVertexAttribPointer explicitly for that, GL 2 and 4 don't (probably because of methods not in CGL).
+ *
+ * (GL 2.1 says that GL_VERTEX_ARRAY needs to be enabled, but does not list it in glEnable)
+ *
+ * If vertex attributes get modified, they're undefined, otherwise they will stay the same.
+ * If no shader is active, this produces undefined results in GL ES 2.0, but without throwing
+ *
+ * @param mode kind of primitive to render, must be GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES,
+ *                  GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, or GL_TRIANGLES
+ * @param first starting index in the enabled arrays
+ * @param count number of indices to be rendered
+ *
+ * @errors GL_INVALID_ENUM      if @ref mode is not an accepted value
+ *         GL_INVALID_VALUE     if @ref count < 0
+ *         GL_INVALID_OPERATION (only when doing buffer mapping or geometry shading, both not in CGL)
+ *         GL_INVALID_FRAMEBUFFER_OPERATION (also only by GL ES 2.0, and not achievable in CGL)
+ *
+ * @ingroup framebuffer
  */
 typedef void (APIENTRYP PFNGLDRAWARRAYSPROC)(GLenum mode, GLint first, GLsizei count);
 GLAPI PFNGLDRAWARRAYSPROC glad_glDrawArrays;
 #define glDrawArrays glad_glDrawArrays
 
-
+/*! @brief render primitives from array data
+ *
+ * like glDrawArrays, but specifies a pointer to an index array instead of an starting index.
+ * Also can use multiple arrays, also references glE and glVertexAttribPointer.
+ *
+ * (GL 2.1 says that GL_VERTEX_ARRAY needs to be enabled, but does not list it in glEnable)
+ *
+ * If vertex attributes get modified, they're undefined, otherwise they will stay the same.
+ * If no shader is active, this produces undefined results in GL ES 2.0, but without throwing
+ *
+ * @param mode kind of primitive to render, must be GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES,
+ *                  GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, or GL_TRIANGLES
+ * @param count number of elements to be rendered
+ * @param type type of values in @ref indices, must be GL_UNSIGNED_BYTE or GL_UNSIGNED_SHORT
+ * @param indices pointer to the location where the indices are stored
+ *
+ * @errors GL_INVALID_ENUM      if @ref mode or @ref type is not an accepted value
+ *         GL_INVALID_VALUE     if @ref count < 0
+ *         GL_INVALID_OPERATION (only when doing buffer mapping or geometry shading, both not in CGL)
+ *         GL_INVALID_FRAMEBUFFER_OPERATION (also only by GL ES 2.0, and not achievable in CGL)
+ *
+ * @ingroup framebuffer
+ */
 typedef void (APIENTRYP PFNGLDRAWELEMENTSPROC)(GLenum mode, GLsizei count, GLenum type, const void *indices);
 GLAPI PFNGLDRAWELEMENTSPROC glad_glDrawElements;
 #define glDrawElements glad_glDrawElements
@@ -606,7 +759,6 @@ typedef void (APIENTRYP PFNGLDEPTHFUNCPROC)(GLenum func);
 GLAPI PFNGLDEPTHFUNCPROC glad_glDepthFunc;
 #define glDepthFunc glad_glDepthFunc
 
-
 /*! @brief specify mapping of depth values from normalized device coordinates to window coordinates
  *
  * the fragment shader returns depth values in [-1, 1], but they must be specified to land in [0, 1]
@@ -651,6 +803,20 @@ typedef void (APIENTRYP PFNGLCULLFACEPROC)(GLenum mode);
 GLAPI PFNGLCULLFACEPROC glad_glCullFace;
 #define glCullFace glad_glCullFace
 
+/*! @brief define front- and back-facing polygons
+ *
+ * defines which side of a polygon is called front facing. A projection is said to have clockwise winding,
+ * if the projection of the path from the first to the last vertex moves clockwise around its interior.
+ * therefore, there are two modes: GL_CW: clockwise being front-facing
+ *                                 GL_CCW: clockwise begin back-facing, i.e. counter-clockwise being front
+ * the default is GL_CCW.
+ *
+ * @param mode orientation of front-facing polygons, must be GL_CW or GL_CCW
+ *
+ * @errors GL_INVALID_ENUM if @ref mode is not GL_CW or GL_CCW
+ *
+ * @ingroup postprocessing
+ */
 typedef void (APIENTRYP PFNGLFRONTFACEPROC)(GLenum mode);
 GLAPI PFNGLFRONTFACEPROC glad_glFrontFace;
 #define glFrontFace glad_glFrontFace
@@ -778,6 +944,17 @@ typedef void (APIENTRYP PFNGLDELETEBUFFERSPROC)(GLsizei n, const GLuint *buffers
 GLAPI PFNGLDELETEBUFFERSPROC glad_glDeleteBuffers;
 #define glDeleteBuffers glad_glDeleteBuffers
 
+/*! @brief generate buffer object names
+ *
+ * returns n new _names_ for buffers. They still must be created by glBindBuffer
+ *
+ * @param n number of buffer object names to be generated
+ * @param buffers array in which the generated buffer object names are stored
+ *
+ * @errors GL_INVALID_VALUE if @ref n < 0
+ *
+ * @ingroup buffer
+ */
 typedef void (APIENTRYP PFNGLGENBUFFERSPROC)(GLsizei n, GLuint *buffers);
 GLAPI PFNGLGENBUFFERSPROC glad_glGenBuffers;
 #define glGenBuffers glad_glGenBuffers
@@ -923,7 +1100,6 @@ typedef void (APIENTRYP PFNGLCOPYTEXSUBIMAGE2DPROC)(GLenum target, GLint level, 
 GLAPI PFNGLCOPYTEXSUBIMAGE2DPROC glad_glCopyTexSubImage2D;
 #define glCopyTexSubImage2D glad_glCopyTexSubImage2D
 
-
 /*! @brief delete named textures
  *
  * deletes textures named by the elements of an array of texture names. Those names then
@@ -941,6 +1117,17 @@ typedef void (APIENTRYP PFNGLDELETETEXTURESPROC)(GLsizei n, const GLuint *textur
 GLAPI PFNGLDELETETEXTURESPROC glad_glDeleteTextures;
 #define glDeleteTextures glad_glDeleteTextures
 
+/*! @brief generate texture names
+ *
+ * returns n new _names_ for texture. They still must be initialized by glBindTexture
+ *
+ * @param n number of texture names to be generated
+ * @param buffers array in which the generated texture names are stored
+ *
+ * @errors GL_INVALID_VALUE if @ref n < 0
+ *
+ * @ingroup texture
+ */
 typedef void (APIENTRYP PFNGLGENTEXTURESPROC)(GLsizei n, GLuint *textures);
 GLAPI PFNGLGENTEXTURESPROC glad_glGenTextures;
 #define glGenTextures glad_glGenTextures
@@ -1134,7 +1321,7 @@ GLAPI PFNGLBINDATTRIBLOCATIONPROC glad_glBindAttribLocation;
 
 
 
-/*! enable or disable a generic vertex attribute array
+/*! @brief enable or disable a generic vertex attribute array
  *
  * enables/disables vertex attribute arrays used in draw calls, since they're disabled by default.
  *
@@ -1142,6 +1329,8 @@ GLAPI PFNGLBINDATTRIBLOCATIONPROC glad_glBindAttribLocation;
  *
  * @errors GL_INVALID_VALUE     if index >= GL_MAX_VERTEX_ATTRIBS
  *         GL_INVALID_OPERATION if no vertex array object is bound only in GL 4
+ *
+ * @ingroup shader
  */
 typedef void (APIENTRYP PFNGLDISABLEVERTEXATTRIBARRAYPROC)(GLuint index);
 GLAPI PFNGLDISABLEVERTEXATTRIBARRAYPROC glad_glDisableVertexAttribArray;
