@@ -1,3 +1,16 @@
+/*
+ *  Common OpenGL header file, with loader based on glad 0.1.36
+ *  (https://glad.dav1d.de/#profile=compatibility&language=c&specification=gl&loader=on&api=gl%3D2.0)
+ *
+ *  This loader loads the common subset of OpenGL 2.1, 4.5 core profile and GL ES 2.0, as described
+ *  in the official reference documentation.
+ *  The loader is modelled after glad.
+ *
+ *  Copyright (c) 2023, Hypatia of Sva <hypatia dot sva at posteo dot eu>
+ *  SPDX-License-Identifier: MIT
+*/
+
+
 /* Explicit omissions:
  *
  * glCompressedTexImage2D, glCompressedTexSubImage2D
@@ -20,6 +33,111 @@
  *
  *
  */
+
+
+#ifndef CGLAD_H
+#define CGLAD_H
+
+#ifdef __gl_h_
+#error OpenGL header already included, remove this include, glad already provides it
+#endif
+#define __gl_h_
+
+#if defined(_WIN32) && !defined(APIENTRY) && !defined(__CYGWIN__) && !defined(__SCITECH_SNAP__)
+#define APIENTRY __stdcall
+#endif
+
+#ifndef APIENTRY
+#define APIENTRY
+#endif
+#ifndef APIENTRYP
+#define APIENTRYP APIENTRY *
+#endif
+
+#ifndef GLAPIENTRY
+#define GLAPIENTRY APIENTRY
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* fixed from glad: ISO C90 forbids cast from function to data pointer,
+ * hence GLADproc, not void*, as return type of the function loader
+ */
+typedef void     (* GLADproc)(void);
+typedef GLADproc (* GLADloadproc)(const char *name);
+
+#ifndef GLAPI
+# if defined(GLAD_GLAPI_EXPORT)
+#  if defined(_WIN32) || defined(__CYGWIN__)
+#   if defined(GLAD_GLAPI_EXPORT_BUILD)
+#    if defined(__GNUC__)
+#     define GLAPI __attribute__ ((dllexport)) extern
+#    else
+#     define GLAPI __declspec(dllexport) extern
+#    endif
+#   else
+#    if defined(__GNUC__)
+#     define GLAPI __attribute__ ((dllimport)) extern
+#    else
+#     define GLAPI __declspec(dllimport) extern
+#    endif
+#   endif
+#  elif defined(__GNUC__) && defined(GLAD_GLAPI_EXPORT_BUILD)
+#   define GLAPI __attribute__ ((visibility ("default"))) extern
+#  else
+#   define GLAPI extern
+#  endif
+# else
+#  define GLAPI extern
+# endif
+#endif
+
+/*! @brief loads the GL functions
+ * this is the whole interface to cglad - since it only loads one version,
+ * there is no necessity for a version struct or other options.
+ * It only loads by a loader function, so e.g. one typically supplied by SDL or GLFW,
+ * but if you need something more specific, load the DLL yourself and supply a loader function
+ * for that.
+ *
+ * @param loader loader function that returns the function pointer
+ */
+GLAPI int cgladLoadGLLoader(GLADloadproc loader);
+
+
+/* only those types that are actually used, also reduced from the khrplatform.h layer */
+typedef unsigned int GLenum;
+typedef unsigned char GLboolean;
+typedef unsigned int GLbitfield;
+typedef unsigned char GLubyte;
+typedef int GLint;
+typedef unsigned int GLuint;
+typedef int GLsizei;
+typedef float GLfloat;
+typedef double GLdouble;
+typedef char GLchar;
+#if defined(_WIN64)
+typedef signed   long long int GLsizeiptr;
+#else
+typedef signed   long  int     GLsizeiptr;
+#endif
+/* this is the only significant portion left from khrplatform.h: */
+#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || defined(__GNUC__) || defined(__SCO__) || defined(__USLC__)
+#include <stdint.h>
+#if defined(__SIZEOF_LONG__) && defined(__SIZEOF_POINTER__)
+#if __SIZEOF_POINTER__ > __SIZEOF_LONG__
+#define CGLAD_USE_INTPTR_T
+#endif
+#endif
+#endif
+#ifdef CGLAD_USE_INTPTR_T
+typedef intptr_t       GLintptr;
+#else
+typedef GLsizeiptr     GLintptr;
+#endif
+
+
 
 
 #define GL_FALSE 0
@@ -154,8 +272,6 @@
 #define GL_CW 0x0900
 #define GL_CCW 0x0901
 
-
-
 #define GL_ACTIVE_TEXTURE 0x84E0
 #define GL_ALIASED_LINE_WIDTH_RANGE 0x846E
 #define GL_ARRAY_BUFFER_BINDING 0x8894
@@ -174,13 +290,13 @@
 #define GL_DEPTH_CLEAR_VALUE 0x0B73
 #define GL_DEPTH_FUNC 0x0B74
 #define GL_DEPTH_RANGE 0x0B70
-#define GL_DEPTH_TEST 0x0B71
 #define GL_DEPTH_WRITEMASK 0x0B72
 #define GL_ELEMENT_ARRAY_BUFFER_BINDING 0x8895
 #define GL_LINE_WIDTH 0x0B21
 #define GL_MAX_CUBE_MAP_TEXTURE_SIZE 0x851C
 #define GL_MAX_TEXTURE_IMAGE_UNITS 0x8872
 #define GL_MAX_TEXTURE_SIZE 0x0D33
+#define GL_MAX_VERTEX_ATTRIBS 0x8869
 #define GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS 0x8B4C
 #define GL_MAX_VIEWPORT_DIMS 0x0D3A
 #define GL_NUM_COMPRESSED_TEXTURE_FORMATS 0x86A2
@@ -212,6 +328,15 @@
 #define GL_TEXTURE_BINDING_CUBE_MAP 0x8514
 #define GL_UNPACK_ALIGNMENT 0x0CF5
 #define GL_VIEWPORT 0x0BA2
+
+#define GL_FLOAT 0x1406
+#define GL_FLOAT_VEC2 0x8B50
+#define GL_FLOAT_VEC3 0x8B51
+#define GL_FLOAT_VEC4 0x8B52
+#define GL_FLOAT_MAT2 0x8B5A
+#define GL_FLOAT_MAT3 0x8B5B
+#define GL_FLOAT_MAT4 0x8B5C
+
 
 
 /*! @defgroup general general purpose functions
@@ -383,7 +508,7 @@ GLAPI PFNGLFLUSHPROC glad_glFlush;
  * GL_UNPACK_ALIGNMENT                  alignment for reading pixels, default 4 (glPixelStore[i])
  * GL_VIEWPORT                          4 values: x, y, width and height of the viewport (glViewport)
  *
- * so only values not also set by the user are:
+ * so the only values not also set by the user are:
  *  GL_ALIASED_LINE_WIDTH_RANGE, GL_COMPRESSED_TEXTURE_FORMATS, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
  *  GL_MAX_CUBE_MAP_TEXTURE_SIZE, GL_MAX_TEXTURE_IMAGE_UNITS, GL_MAX_TEXTURE_SIZE, GL_MAX_VERTEX_ATTRIBS,
  *  GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, GL_MAX_VIEWPORT_DIMS, GL_NUM_COMPRESSED_TEXTURE_FORMATS,
@@ -1268,13 +1393,6 @@ typedef void (APIENTRYP PFNGLDETACHSHADERPROC)(GLuint program, GLuint shader);
 GLAPI PFNGLDETACHSHADERPROC glad_glDetachShader;
 #define glDetachShader glad_glDetachShader
 
-
-
-
-
-
-
-
 /*! @brief associate a generic vertex attribute index with a named attribute variable
  *
  * Creates an association between the input attribute indices 0..GL_MAX_VERTEX_ATTRIBS-1,
@@ -1311,16 +1429,6 @@ typedef void (APIENTRYP PFNGLBINDATTRIBLOCATIONPROC)(GLuint program, GLuint inde
 GLAPI PFNGLBINDATTRIBLOCATIONPROC glad_glBindAttribLocation;
 #define glBindAttribLocation glad_glBindAttribLocation
 
-
-
-
-
-
-
-
-
-
-
 /*! @brief enable or disable a generic vertex attribute array
  *
  * enables/disables vertex attribute arrays used in draw calls, since they're disabled by default.
@@ -1339,7 +1447,17 @@ typedef void (APIENTRYP PFNGLENABLEVERTEXATTRIBARRAYPROC)(GLuint index);
 GLAPI PFNGLENABLEVERTEXATTRIBARRAYPROC glad_glEnableVertexAttribArray;
 #define glEnableVertexAttribArray glad_glEnableVertexAttribArray
 
+/*! @brief return information about an active attribute variable (for the specified program object)
+ *
+ *
+ */
+typedef void (APIENTRYP PFNGLGETACTIVEATTRIBPROC)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
+GLAPI PFNGLGETACTIVEATTRIBPROC glad_glGetActiveAttrib;
+#define glGetActiveAttrib glad_glGetActiveAttrib
 
 
+#ifdef __cplusplus
+}
+#endif
 
-
+#endif
