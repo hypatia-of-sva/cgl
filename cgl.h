@@ -94,7 +94,7 @@ typedef GLADproc (* GLADloadproc)(const char *name);
 # endif
 #endif
 
-/*! @brief loads the GL functions
+/*! \brief loads the GL functions
  * this is the whole interface to cglad - since it only loads one version,
  * there is no necessity for a version struct or other options.
  * It only loads by a loader function, so e.g. one typically supplied by SDL or GLFW,
@@ -106,7 +106,7 @@ typedef GLADproc (* GLADloadproc)(const char *name);
  * so that's easy to check for the library user, and must be done regardless in case of loader
  * error / bugs.
  *
- * @param loader loader function that returns the function pointer
+ * \param loader loader function that returns the function pointer
  */
 GLAPI void cglLoadGL(GLADloadproc loader);
 
@@ -344,34 +344,36 @@ typedef GLsizeiptr     GLintptr;
 
 
 
-/*! @defgroup general general purpose functions
+/*! \defgroup general General Utilities
+ *  \brief general purpose functions and utilities
  *
  * general purpose functionality to get information, finish or flush,
  * clear current data, enable or disable features etc.
  */
-/*! @defgroup framebuffer general framebuffer operations
+/*! \defgroup framebuffer Framebuffer
+ * \brief general framebuffer operations
  *
  * functions operating on the whole frame buffer, such as clearing the screen
  * or locking it from writing.
  */
-/*! @defgroup buffer Buffers
- * @brief buffer object and target functions
+/*! \defgroup buffer Buffers
+ * \brief buffer object and target functions
  *
  * Functions that refer to buffer objects, their binding and use in different targets.
  */
-/*! @defgroup texture Textures
- * @brief texture object and target functions
+/*! \defgroup texture Textures
+ * \brief texture object and target functions
  *
  * Functions that refer to texture objects, their binding and use in different targets.
  */
-/*! @defgroup shader Shaders and Programs
- * @brief shader objects and programs composed of them
+/*! \defgroup shader Shaders and Programs
+ * \brief shader objects and programs composed of them
  *
  * Functions that create and use shader programs, that is program objects linked together
  * from shader objects holding executables compiled from GLSL source code.
  */
-/*! @defgroup postprocessing Postprocessing
- * @brief post-processing functions (blending, stencil ops etc.)
+/*! \defgroup postprocessing Postprocessing
+ * \brief post-processing functions (blending, stencil ops etc.)
  *
  * Functions that create post processing operations like blending, stenceling,
  * depth tests, culling, scissoring etc.
@@ -379,7 +381,7 @@ typedef GLsizeiptr     GLintptr;
 
 
 
-/*! @brief enable or disable server-side GL capabilities
+/*! \brief enable or disable server-side GL capabilities
  *
  * enables or disables certain features usually not enabled. only GL_DITHER is on by default:
  *  GL_BLEND                    blend incoming with old colors, see glBlendFunc
@@ -392,13 +394,13 @@ typedef GLsizeiptr     GLintptr;
  *  GL_SCISSOR_TEST             discard fragments that are outside the scissor rectangle. See glScissor
  *  GL_STENCIL_TEST             stencil testing, update the stencil buffer. See glStencilFunc/glStencilOp
  *
- * @param cap the capability to enable/disable, must be GL_BLEND, GL_CULL_FACE, GL_DEPTH_TEST, GL_DITHER,
+ * \param cap the capability to enable/disable, must be GL_BLEND, GL_CULL_FACE, GL_DEPTH_TEST, GL_DITHER,
  *                          GL_POLYGON_OFFSET_FILL, GL_SAMPLE_ALPHA_TO_COVERAGE, GL_SAMPLE_COVERAGE,
  *                          GL_SCISSOR_TEST or GL_STENCIL_TEST
  *
- * @errors GL_INVALID_ENUM if @ref cap is not one of the accepted values
+ * \errors GL_INVALID_ENUM if \ref cap is not one of the accepted values
  *
- * @ingroup general
+ * \ingroup general
  */
 typedef void (APIENTRYP PFNGLDISABLEPROC)(GLenum cap);
 GLAPI PFNGLDISABLEPROC glad_glDisable;
@@ -407,20 +409,20 @@ typedef void (APIENTRYP PFNGLENABLEPROC)(GLenum cap);
 GLAPI PFNGLENABLEPROC glad_glEnable;
 #define glEnable glad_glEnable
 
-/*! @brief block until all GL execution is complete
+/*! \brief block until all GL execution is complete
  *
  * wait until all previous GL commands are completed
  * this can take an undetermined amount of time
  *
- * @errors none
+ * \errors none
  *
- * @ingroup general
+ * \ingroup general
  */
 typedef void (APIENTRYP PFNGLFINISHPROC)(void);
 GLAPI PFNGLFINISHPROC glad_glFinish;
 #define glFinish glad_glFinish
 
-/*! @brief force execution of GL commands in finite time
+/*! \brief force execution of GL commands in finite time
  *
  * empty the various command buffers.
  * this _should_ be done, according to the reference, whenever the application expects the issued commands
@@ -428,16 +430,16 @@ GLAPI PFNGLFINISHPROC glad_glFinish;
  * However, glFlush can return immediately. It does not wait for the other commands to be done,
  * it merely issues that they _should_ be done about now.
  *
- * @errors none
+ * \errors none
  *
- * @ingroup general
+ * \ingroup general
  */
 typedef void (APIENTRYP PFNGLFLUSHPROC)(void);
 GLAPI PFNGLFLUSHPROC glad_glFlush;
 #define glFlush glad_glFlush
 
 
-/*! @brief return the value or values of a selected parameter
+/*! \brief return the value or values of a selected parameter
  *
  * reads bool, int and float values. casts them as:
  *      bool to int, float: keep GL_TRUE or GL_FALSE
@@ -520,12 +522,12 @@ GLAPI PFNGLFLUSHPROC glad_glFlush;
  *  GL_SAMPLE_BUFFERS, GL_SAMPLES, GL_SUBPIXEL_BITS
  * the others are more there to keep track of what you already have done.
  *
- * @param pname parameter value to be returned, one out of the table above
- * @param data returns value or values of the specified parameter by writing into the pointer
+ * \param pname parameter value to be returned, one out of the table above
+ * \param data returns value or values of the specified parameter by writing into the pointer
  *
- * @errors GL_INVALID_ENUM if @ref pname is not an accepted value
+ * \errors GL_INVALID_ENUM if \ref pname is not an accepted value
  *
- * @ingroup general
+ * \ingroup general
  */
 typedef void (APIENTRYP PFNGLGETBOOLEANVPROC)(GLenum pname, GLboolean *data);
 GLAPI PFNGLGETBOOLEANVPROC glad_glGetBooleanv;
@@ -539,9 +541,9 @@ GLAPI PFNGLGETINTEGERVPROC glad_glGetIntegerv;
 
 
 
-/*! @brief render primitives from array data
+/*! \brief render primitives from array data
  *
- * draws multiple primitives, starting from the index @ref first exactly @ref count elements long.
+ * draws multiple primitives, starting from the index \ref first exactly \ref count elements long.
  * it uses all enabled arrarys, GL ES 2.0 references glEnableVertexAttribArray aligned
  * glVertexAttribPointer explicitly for that, GL 2 and 4 don't (probably because of methods not in CGL).
  *
@@ -550,23 +552,23 @@ GLAPI PFNGLGETINTEGERVPROC glad_glGetIntegerv;
  * If vertex attributes get modified, they're undefined, otherwise they will stay the same.
  * If no shader is active, this produces undefined results in GL ES 2.0, but without throwing
  *
- * @param mode kind of primitive to render, must be GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES,
+ * \param mode kind of primitive to render, must be GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES,
  *                  GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, or GL_TRIANGLES
- * @param first starting index in the enabled arrays
- * @param count number of indices to be rendered
+ * \param first starting index in the enabled arrays
+ * \param count number of indices to be rendered
  *
- * @errors GL_INVALID_ENUM      if @ref mode is not an accepted value
- *         GL_INVALID_VALUE     if @ref count < 0
+ * \errors GL_INVALID_ENUM      if \ref mode is not an accepted value
+ *         GL_INVALID_VALUE     if \ref count < 0
  *         GL_INVALID_OPERATION (only when doing buffer mapping or geometry shading, both not in CGL)
  *         GL_INVALID_FRAMEBUFFER_OPERATION (also only by GL ES 2.0, and not achievable in CGL)
  *
- * @ingroup framebuffer
+ * \ingroup framebuffer
  */
 typedef void (APIENTRYP PFNGLDRAWARRAYSPROC)(GLenum mode, GLint first, GLsizei count);
 GLAPI PFNGLDRAWARRAYSPROC glad_glDrawArrays;
 #define glDrawArrays glad_glDrawArrays
 
-/*! @brief render primitives from array data
+/*! \brief render primitives from array data
  *
  * like glDrawArrays, but specifies a pointer to an index array instead of an starting index.
  * Also can use multiple arrays, also references glE and glVertexAttribPointer.
@@ -576,18 +578,18 @@ GLAPI PFNGLDRAWARRAYSPROC glad_glDrawArrays;
  * If vertex attributes get modified, they're undefined, otherwise they will stay the same.
  * If no shader is active, this produces undefined results in GL ES 2.0, but without throwing
  *
- * @param mode kind of primitive to render, must be GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES,
+ * \param mode kind of primitive to render, must be GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES,
  *                  GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, or GL_TRIANGLES
- * @param count number of elements to be rendered
- * @param type type of values in @ref indices, must be GL_UNSIGNED_BYTE or GL_UNSIGNED_SHORT
- * @param indices pointer to the location where the indices are stored
+ * \param count number of elements to be rendered
+ * \param type type of values in \ref indices, must be GL_UNSIGNED_BYTE or GL_UNSIGNED_SHORT
+ * \param indices pointer to the location where the indices are stored
  *
- * @errors GL_INVALID_ENUM      if @ref mode or @ref type is not an accepted value
- *         GL_INVALID_VALUE     if @ref count < 0
+ * \errors GL_INVALID_ENUM      if \ref mode or \ref type is not an accepted value
+ *         GL_INVALID_VALUE     if \ref count < 0
  *         GL_INVALID_OPERATION (only when doing buffer mapping or geometry shading, both not in CGL)
  *         GL_INVALID_FRAMEBUFFER_OPERATION (also only by GL ES 2.0, and not achievable in CGL)
  *
- * @ingroup framebuffer
+ * \ingroup framebuffer
  */
 typedef void (APIENTRYP PFNGLDRAWELEMENTSPROC)(GLenum mode, GLsizei count, GLenum type, const void *indices);
 GLAPI PFNGLDRAWELEMENTSPROC glad_glDrawElements;
@@ -600,14 +602,14 @@ GLAPI PFNGLDRAWELEMENTSPROC glad_glDrawElements;
 
 
 
-/*! @defgroup clearing clears the frame buffer
+/*! \defgroup clearing clears the frame buffer
  *
  * clearing colors, depth and stencil data in parts of the frame buffer
- * @ingroup framebuffer
- * @{
+ * \ingroup framebuffer
+ * \{
  */
 
-/*! @brief clear buffers to preset values
+/*! \brief clear buffers to preset values
  *
  * fills color, depth and stencil buffers with constant values
  * fills within the scissor box, and is affected by pixel ownership test, dithering and write mask,
@@ -615,31 +617,31 @@ GLAPI PFNGLDRAWELEMENTSPROC glad_glDrawElements;
  *
  * can clear any combination of the three buffers, as indicated by a bitwise or of the flag bits.
  *
- * @param mask Bitwise OR of masks GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, or GL_STENCIL_BUFFER_BIT
+ * \param mask Bitwise OR of masks GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, or GL_STENCIL_BUFFER_BIT
  *
- * @errors GL_INVALID_VALUE if other bits in @param mask are set than the three allowed.
+ * \errors GL_INVALID_VALUE if other bits in \param mask are set than the three allowed.
  */
 typedef void (APIENTRYP PFNGLCLEARPROC)(GLbitfield mask);
 GLAPI PFNGLCLEARPROC glad_glClear;
 #define glClear glad_glClear
 
-/*! @brief specify clear values for the color buffers
+/*! \brief specify clear values for the color buffers
  *
  * Set the constant value GL_COLOR_CLEAR_VALUE for glClear with GL_COLOR_BUFFER_BIT
  * Default value is (0,0,0,0).
  *
- * @param red   red   component of GL_COLOR_CLEAR_VALUE, clamped to [0,1]
- * @param green green component of GL_COLOR_CLEAR_VALUE, clamped to [0,1]
- * @param blue  blue  component of GL_COLOR_CLEAR_VALUE, clamped to [0,1]
- * @param alpha alpha component of GL_COLOR_CLEAR_VALUE, clamped to [0,1]
+ * \param red   red   component of GL_COLOR_CLEAR_VALUE, clamped to [0,1]
+ * \param green green component of GL_COLOR_CLEAR_VALUE, clamped to [0,1]
+ * \param blue  blue  component of GL_COLOR_CLEAR_VALUE, clamped to [0,1]
+ * \param alpha alpha component of GL_COLOR_CLEAR_VALUE, clamped to [0,1]
  *
- * @errors none
+ * \errors none
  */
 typedef void (APIENTRYP PFNGLCLEARCOLORPROC)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 GLAPI PFNGLCLEARCOLORPROC glad_glClearColor;
 #define glClearColor glad_glClearColor
 
-/*! @brief specify the clear value for the depth buffer
+/*! \brief specify the clear value for the depth buffer
  *
  * Set the constant value GL_DEPTH_CLEAR_VALUE for glClear with GL_DEPTH_BUFFER_BIT
  * Note: this function does not in exist in GL ES 2.0, instead being replaced with
@@ -647,9 +649,9 @@ GLAPI PFNGLCLEARCOLORPROC glad_glClearColor;
  * Since this is a widening, not a narrowing cast, glClearDepthf is defined as an alias to glClearDepth,
  * if not otherwise available
  *
- * @param depth depth value used when the depth buffer is cleared
+ * \param depth depth value used when the depth buffer is cleared
  *
- * @errors none
+ * \errors none
  */
 typedef void (APIENTRYP PFNGLCLEARDEPTHPROC)(GLdouble depth);
 GLAPI PFNGLCLEARDEPTHPROC glad_glClearDepth;
@@ -657,66 +659,63 @@ GLAPI PFNGLCLEARDEPTHPROC glad_glClearDepth;
 /* ??? */
 #define glClearDepthf glad_glClearDepth
 
-
-/*! @brief specify the clear value for the stencil buffer
+/*! \brief specify the clear value for the stencil buffer
  *
  * Set the constant value GL_STENCIL_CLEAR_VALUE for glClear with GL_STENCIL_BUFFER_BIT
  * Will be masked to the size of the stencil bits (i.e. the effecive value is (s & (1<<GL_STENCIL_BITS -1)))
  * Default value is 0.
  *
- * @param s index used when the stencil buffer is cleared
+ * \param s index used when the stencil buffer is cleared
  *
- * @errors none
+ * \errors none
  */
 typedef void (APIENTRYP PFNGLCLEARSTENCILPROC)(GLint s);
 GLAPI PFNGLCLEARSTENCILPROC glad_glClearStencil;
 #define glClearStencil glad_glClearStencil
 
-/*! @} */
+/*! \} */
 
 
 
 
 
-/*! @defgroup masking masking buffers of the frame buffer
+/*! \defgroup masking masking buffers of the frame buffer
  *
  * making certain buffers in the frame buffer, as the color, depth and stencil buffer, read only.
- * @ingroup masking
- * @{
+ * \ingroup framebuffer
+ * \{
  */
 
-/*! @brief enable and disable writing of frame buffer color components
+/*! \brief enable and disable writing of frame buffer color components
  *
  * sets if the RGBA components of the frame buffer can be written to or not (on color, not bit level)
  * Default values are all GL_TRUE
  *
- * @param red   sets if the red   component of the color buffer can be written to (GL_TRUE or GL_FALSE)
- * @param green sets if the green component of the color buffer can be written to (GL_TRUE or GL_FALSE)
- * @param blue  sets if the blue  component of the color buffer can be written to (GL_TRUE or GL_FALSE)
- * @param alpha sets if the alpha component of the color buffer can be written to (GL_TRUE or GL_FALSE)
+ * \param red   sets if the red   component of the color buffer can be written to (GL_TRUE or GL_FALSE)
+ * \param green sets if the green component of the color buffer can be written to (GL_TRUE or GL_FALSE)
+ * \param blue  sets if the blue  component of the color buffer can be written to (GL_TRUE or GL_FALSE)
+ * \param alpha sets if the alpha component of the color buffer can be written to (GL_TRUE or GL_FALSE)
  *
- * @errors none
+ * \errors none
  */
 typedef void (APIENTRYP PFNGLCOLORMASKPROC)(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
 GLAPI PFNGLCOLORMASKPROC glad_glColorMask;
 #define glColorMask glad_glColorMask
 
-/*! @brief enable and disable writing of the frame buffers depth buffer
+/*! \brief enable and disable writing of the frame buffers depth buffer
  *
  * sets if the depth buffer of the frame buffer can be written to or not
  * Default value is GL_TRUE (However, it has no effect without activating GL_DEPTH_TEST, see glDepthFunc)
  *
- * @param flag   sets if the depth buffer can be written to (GL_TRUE or GL_FALSE)
+ * \param flag   sets if the depth buffer can be written to (GL_TRUE or GL_FALSE)
  *
- * @errors none
+ * \errors none
  */
 typedef void (APIENTRYP PFNGLDEPTHMASKPROC)(GLboolean flag);
 GLAPI PFNGLDEPTHMASKPROC glad_glDepthMask;
 #define glDepthMask glad_glDepthMask
 
-
-
-/*! @} */
+/*! \} */
 
 
 
@@ -730,30 +729,30 @@ GLAPI PFNGLDEPTHMASKPROC glad_glDepthMask;
 
 
 
-/*! @defgroup blending color blending
+/*! \defgroup blending color blending
  *
  * color blending operations of incoming onto old colors in the frame buffer
- * @ingroup postprocessing
- * @{
+ * \ingroup postprocessing
+ * \{
  */
 
-/*! @brief set the blend color
+/*! \brief set the blend color
  * Sets the parameter GL_BLEND_COLOR for use in blending functions,
  * see glBlendFunc for detailed usage. The default value is (0, 0, 0, 0).
  * All values are clamped to the range [0, 1] before being stored.
  *
- * @param red   red   component of GL_BLEND_COLOR, gets clamped to [0,1]
- * @param green green component of GL_BLEND_COLOR, gets clamped to [0,1]
- * @param blue  blue  component of GL_BLEND_COLOR, gets clamped to [0,1]
- * @param alpha alpha component of GL_BLEND_COLOR, gets clamped to [0,1]
+ * \param red   red   component of GL_BLEND_COLOR, gets clamped to [0,1]
+ * \param green green component of GL_BLEND_COLOR, gets clamped to [0,1]
+ * \param blue  blue  component of GL_BLEND_COLOR, gets clamped to [0,1]
+ * \param alpha alpha component of GL_BLEND_COLOR, gets clamped to [0,1]
  *
- * @errors none
+ * \errors none
  */
 typedef void (APIENTRYP PFNGLBLENDCOLORPROC)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 GLAPI PFNGLBLENDCOLORPROC glad_glBlendColor;
 #define glBlendColor glad_glBlendColor
 
-/*! @brief specify the equation used for both the RGB blend equation and the Alpha blend equation
+/*! \brief specify the equation used for both the RGB blend equation and the Alpha blend equation
  *
  * At the blending stage, first the blend factors for the existing color in the pixel ("destination")
  * and the new color coming from the fragment shader ("source") get attached factors, see glBendFunc,
@@ -767,36 +766,36 @@ GLAPI PFNGLBLENDCOLORPROC glad_glBlendColor;
  * glBlendEquation sets this equation for both RGB and A. See glBlendEquationSeparate for details
  * Default value is GL_FUNC_ADD
  *
- * @param mode how source and destination colors are combined
+ * \param mode how source and destination colors are combined
  *              must be GL_FUNC_ADD, GL_FUNC_SUBTRACT or GL_FUNC_REVERSE_SUBTRACT
  *
- * @errors GL_INVALID_ENUM if @ref mode is not GL_FUNC_ADD, GL_FUNC_SUBTRACT or GL_FUNC_REVERSE_SUBTRACT
+ * \errors GL_INVALID_ENUM if \ref mode is not GL_FUNC_ADD, GL_FUNC_SUBTRACT or GL_FUNC_REVERSE_SUBTRACT
  */
 typedef void (APIENTRYP PFNGLBLENDEQUATIONPROC)(GLenum mode);
 GLAPI PFNGLBLENDEQUATIONPROC glad_glBlendEquation;
 #define glBlendEquation glad_glBlendEquation
 
-/*! @brief set the RGB blend equation and the alpha blend equation separately
+/*! \brief set the RGB blend equation and the alpha blend equation separately
  *
  * Like glBlendEquation, but you can set different equations for RGB and Alpha blending.
  * See glBlendEquation for details.
  *
- * @param modeRGB RGB blend equation. must be GL_FUNC_ADD, GL_FUNC_SUBTRACT or GL_FUNC_REVERSE_SUBTRACT
- * @param modeAlpha alpha blend equation. must be GL_FUNC_ADD, GL_FUNC_SUBTRACT or GL_FUNC_REVERSE_SUBTRACT
+ * \param modeRGB RGB blend equation. must be GL_FUNC_ADD, GL_FUNC_SUBTRACT or GL_FUNC_REVERSE_SUBTRACT
+ * \param modeAlpha alpha blend equation. must be GL_FUNC_ADD, GL_FUNC_SUBTRACT or GL_FUNC_REVERSE_SUBTRACT
  *
- * @errors GL_INVALID_ENUM if @ref modeRGB or @ref modeAlpha aren't
+ * \errors GL_INVALID_ENUM if \ref modeRGB or \ref modeAlpha aren't
  *                              GL_FUNC_ADD, GL_FUNC_SUBTRACT or GL_FUNC_REVERSE_SUBTRACT
  */
 typedef void (APIENTRYP PFNGLBLENDEQUATIONSEPARATEPROC)(GLenum modeRGB, GLenum modeAlpha);
 GLAPI PFNGLBLENDEQUATIONSEPARATEPROC glad_glBlendEquationSeparate;
 #define glBlendEquationSeparate glad_glBlendEquationSeparate
 
-/*! @brief specify pixel arithmetic
+/*! \brief specify pixel arithmetic
  *
  * defines the blend factors to be used in the blend equation.
  * glBlendFunc sets these for both RGB and A. See glBlendFuncSeparate for details
- * factors can be set for the scaling of the new color through @ref sfactor and
- * the old color through @ref dfactor with the follwing parameters:
+ * factors can be set for the scaling of the new color through \ref sfactor and
+ * the old color through \ref dfactor with the follwing parameters:
  *          enum value              color scale factor for color c (can stand in for r, g, b, a)
  *          GL_ZERO                         0
  *          GL_ONE                          1
@@ -824,46 +823,46 @@ GLAPI PFNGLBLENDEQUATIONSEPARATEPROC glad_glBlendEquationSeparate;
  *
  * The default values are: GL_ONE for the source and GL_ZERO for the destination (= overriding old colors)
  *
- * @param sfactor how the source blending factors are computed. Must be one of
+ * \param sfactor how the source blending factors are computed. Must be one of
  *                  GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR,
  *                  GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA,
  *                  GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR,
  *                  GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, GL_SRC_ALPHA_SATURATE
  *
- * @param dfactor how the destination blending factors are computed. Must be one of
+ * \param dfactor how the destination blending factors are computed. Must be one of
  *                  GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR,
  *                  GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA,
  *                  GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR,
  *                  GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA.
  *
- * @errors GL_INVALID_ENUM if @ref sfactor or @ref dfactor are not from the list, or
+ * \errors GL_INVALID_ENUM if \ref sfactor or \ref dfactor are not from the list, or
  *                              GL_SRC_ALPHA_SATURATE is used for the destination
  */
 typedef void (APIENTRYP PFNGLBLENDFUNCPROC)(GLenum sfactor, GLenum dfactor);
 GLAPI PFNGLBLENDFUNCPROC glad_glBlendFunc;
 #define glBlendFunc glad_glBlendFunc
 
-/*! @brief specify pixel arithmetic for RGB and alpha components separately
+/*! \brief specify pixel arithmetic for RGB and alpha components separately
  *
  * the same as glBlendFunc, but you can give different calculations for the RGB and alpha factors.
  * see glBlendFunc for the calculation
  *
- * @param sfactorRGB source RGB blending factors, see @ref sfactor in glBlendFunc
- * @param dfactorRGB destination RGB blending factors, see @ref dfactor in glBlendFunc
- * @param sfactorAlpha source alpha blending factors, see @ref sfactor in glBlendFunc
- * @param dfactorAlpha source alpha blending factors, see @ref dfactor in glBlendFunc
+ * \param sfactorRGB source RGB blending factors, see \ref sfactor in glBlendFunc
+ * \param dfactorRGB destination RGB blending factors, see \ref dfactor in glBlendFunc
+ * \param sfactorAlpha source alpha blending factors, see \ref sfactor in glBlendFunc
+ * \param dfactorAlpha source alpha blending factors, see \ref dfactor in glBlendFunc
  *
- * @errors GL_INVALID_ENUM if one of the enums are wrong
+ * \errors GL_INVALID_ENUM if one of the enums are wrong
  *                              (desktop GL does specify only warnings on RGB, not alpha factors)
  */
 typedef void (APIENTRYP PFNGLBLENDFUNCSEPARATEPROC)(GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha);
 GLAPI PFNGLBLENDFUNCSEPARATEPROC glad_glBlendFuncSeparate;
 #define glBlendFuncSeparate glad_glBlendFuncSeparate
 
-/*! @} */
+/*! \} */
 
 
-/*! @brief specify the value used for depth buffer comparisons
+/*! \brief specify the value used for depth buffer comparisons
  *
  * when GL_DEPTH_TEST is enabled and new pixels generated, this test will determine if they're drwan:
  *  GL_NEVER        never draw the new pixel
@@ -878,18 +877,18 @@ GLAPI PFNGLBLENDFUNCSEPARATEPROC glad_glBlendFuncSeparate;
  * also, until GL_DEPTH_TEST is on, the depth buffer will not be updated at all.
  * To write to it use GL_ALWAYS
  *
- * @param funct new depth comparison function. must be GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL,
+ * \param funct new depth comparison function. must be GL_NEVER, GL_LESS, GL_EQUAL, GL_LEQUAL,
  *                          GL_GREATER, GL_NOTEQUAL, GL_GEQUAL, or GL_ALWAYS
  *
- * @error GL_INVALID_ENUM if @ref funct is not one of the accepted values
+ * \error GL_INVALID_ENUM if \ref funct is not one of the accepted values
  *
- * @ingroup postprocessing
+ * \ingroup postprocessing
  */
 typedef void (APIENTRYP PFNGLDEPTHFUNCPROC)(GLenum func);
 GLAPI PFNGLDEPTHFUNCPROC glad_glDepthFunc;
 #define glDepthFunc glad_glDepthFunc
 
-/*! @brief specify mapping of depth values from normalized device coordinates to window coordinates
+/*! \brief specify mapping of depth values from normalized device coordinates to window coordinates
  *
  * the fragment shader returns depth values in [-1, 1], but they must be specified to land in [0, 1]
  * this is done by a linear transformation of [-1, 1] to an interval in [0, 1], in the following way:
@@ -902,12 +901,12 @@ GLAPI PFNGLDEPTHFUNCPROC glad_glDepthFunc;
  * Since this is a widening, not a narrowing cast, glDepthRangef is defined as an alias to glDepthRange,
  * if not otherwise available
  *
- * @param n mapping of the near clipping plane to window coordinates = mapping of -1. Default is 0.
- * @param f mapping of the far clipping plane to window coordinates = mapping of 1. Default is 1.
+ * \param n mapping of the near clipping plane to window coordinates = mapping of -1. Default is 0.
+ * \param f mapping of the far clipping plane to window coordinates = mapping of 1. Default is 1.
  *
- * @errors none
+ * \errors none
  *
- * @ingroup postprocessing
+ * \ingroup postprocessing
  */
 typedef void (APIENTRYP PFNGLDEPTHRANGEPROC)(GLdouble n, GLdouble f);
 GLAPI PFNGLDEPTHRANGEPROC glad_glDepthRange;
@@ -916,24 +915,24 @@ GLAPI PFNGLDEPTHRANGEPROC glad_glDepthRange;
 #define glDepthRangef glad_glDepthRange
 
 
-/*! @brief specify whether front- or back-facing facets can be culled
+/*! \brief specify whether front- or back-facing facets can be culled
  *
  * specifies which side of facets/polygons are drawn, if any.
  *      GL_FRONT          front faces (as specified by glFrontFace) are culled if GL_CULL_FACE is enabled
  *      GL_BACK           back faces (the opposite of front faces) are culled if GL_CULL_FACE is enabled
  *      GL_FRONT_AND_BACK all faces are culled if GL_CULL_FACE is enabled; only points and lines are drawn
  *
- * @param mode selection of culling faces, must be GL_FRONT, GL_BACK or GL_FRONT_AND_BACK
+ * \param mode selection of culling faces, must be GL_FRONT, GL_BACK or GL_FRONT_AND_BACK
  *
- * @errors GL_INVALID_ENUM if @ref mode is not GL_FRONT, GL_BACK or GL_FRONT_AND_BACK
+ * \errors GL_INVALID_ENUM if \ref mode is not GL_FRONT, GL_BACK or GL_FRONT_AND_BACK
  *
- * @ingroup postprocessing
+ * \ingroup postprocessing
  */
 typedef void (APIENTRYP PFNGLCULLFACEPROC)(GLenum mode);
 GLAPI PFNGLCULLFACEPROC glad_glCullFace;
 #define glCullFace glad_glCullFace
 
-/*! @brief define front- and back-facing polygons
+/*! \brief define front- and back-facing polygons
  *
  * defines which side of a polygon is called front facing. A projection is said to have clockwise winding,
  * if the projection of the path from the first to the last vertex moves clockwise around its interior.
@@ -941,11 +940,11 @@ GLAPI PFNGLCULLFACEPROC glad_glCullFace;
  *                                 GL_CCW: clockwise begin back-facing, i.e. counter-clockwise being front
  * the default is GL_CCW.
  *
- * @param mode orientation of front-facing polygons, must be GL_CW or GL_CCW
+ * \param mode orientation of front-facing polygons, must be GL_CW or GL_CCW
  *
- * @errors GL_INVALID_ENUM if @ref mode is not GL_CW or GL_CCW
+ * \errors GL_INVALID_ENUM if \ref mode is not GL_CW or GL_CCW
  *
- * @ingroup postprocessing
+ * \ingroup postprocessing
  */
 typedef void (APIENTRYP PFNGLFRONTFACEPROC)(GLenum mode);
 GLAPI PFNGLFRONTFACEPROC glad_glFrontFace;
@@ -960,22 +959,22 @@ GLAPI PFNGLFRONTFACEPROC glad_glFrontFace;
 
 
 
-/*! @brief bind a named buffer object
+/*! \brief bind a named buffer object
  *
  * Binds a buffer object to the GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER target.
- * GL 4.5 and GL ES 3.2 guarantee that a new buffer with the "name" (= id) @ref buffer
+ * GL 4.5 and GL ES 3.2 guarantee that a new buffer with the "name" (= id) \ref buffer
  * will be created if it not already exists; however, GL 2.1 doesn't guarantee it,
  * and GL 4.5 even states that new names must be obtained by glGenBuffers, which
  * appears therefore to be the safer option.
  *
  * Breaks the previous binding.
  * Supplying the buffer name 0 unbinds the previously bound buffer without setting a new one.
- * Bindings persist until another is done on @ref target or glDeleteBuffers is called on @ref buffer
+ * Bindings persist until another is done on \ref target or glDeleteBuffers is called on \ref buffer
  * buffers can be reused for different targets, but that may be inefficient, as the driver
  * can optimize for a specific target. Therefore the best order of operation is
  * first glGenBuffers, then glBindBuffer and after that everything else.
  *
- * @ref buffer will be affected by operations on @ref target, except if buffer == 0, then
+ * \ref buffer will be affected by operations on \ref target, except if buffer == 0, then
  * it will generate GL_INVALID_OPERATION on attempted operations.
  *
  * Use of the targets:
@@ -985,22 +984,22 @@ GLAPI PFNGLFRONTFACEPROC glad_glFrontFace;
  * GL_ELEMENT_ARRAY_BUFFER is used as a replacement for the "client side memory" to load
  *      index parameters. It is used primarily by glDrawElements to supply vertex array indices
  *
- * @param target target to which the buffer object is bound
+ * \param target target to which the buffer object is bound
  *                  must be GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
- * @param buffer name (id) of a buffer object
+ * \param buffer name (id) of a buffer object
  *
- * @errors GL_INVALID_ENUM  if @ref target not GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
- *         GL_INVALID_VALUE if @ref buffer not returned from glGenBuffers (in GL 4.5)
+ * \errors GL_INVALID_ENUM  if \ref target not GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
+ *         GL_INVALID_VALUE if \ref buffer not returned from glGenBuffers (in GL 4.5)
  *
- * @ingroup buffer
+ * \ingroup buffer
  */
 typedef void (APIENTRYP PFNGLBINDBUFFERPROC)(GLenum target, GLuint buffer);
 GLAPI PFNGLBINDBUFFERPROC glad_glBindBuffer;
 #define glBindBuffer glad_glBindBuffer
 
-/*! @brief create and initialize a buffer object's data store
+/*! \brief create and initialize a buffer object's data store
  *
- * creates a _new_ data store of the buffer object bound to @ref target, deletes the old one if it exists.
+ * creates a _new_ data store of the buffer object bound to \ref target, deletes the old one if it exists.
  * Size can be specified, as well as a pointer to copy out of (remains uninitialized if data == NULL)
  *
  * usage is a hint of how the data is used (only cnstraints initialization, not use), namely:
@@ -1012,27 +1011,27 @@ GLAPI PFNGLBINDBUFFERPROC glad_glBindBuffer;
  * data elements must be aligned so that for a datum x with sizeof(x) = N bytes holds:
  *      offset of x in buffer is a multiple of N.
  *
- * @param target target buffer object, must be GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
- * @param size size in bytes of the buffer object's new data store
- * @param data pointer to data that will be copied for initialization, or NULL if no data is to be copied
- * @param usage expected usage pattern of the data store (hint).
+ * \param target target buffer object, must be GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
+ * \param size size in bytes of the buffer object's new data store
+ * \param data pointer to data that will be copied for initialization, or NULL if no data is to be copied
+ * \param usage expected usage pattern of the data store (hint).
  *              must be GL_STREAM_DRAW, GL_STATIC_DRAW, or GL_DYNAMIC_DRAW
  *
- * @errors GL_INVALID_ENUM      if @ref target or @ref usage is not an allowed value
- *         GL_INVALID_VALUE     if @ref size is negative
+ * \errors GL_INVALID_ENUM      if \ref target or \ref usage is not an allowed value
+ *         GL_INVALID_VALUE     if \ref size is negative
  *         GL_INVALID_OPERATION if reserved buffer object name 0 is bound to target
  *         GL_OUT_OF_MEMORY     if GL can't allocate the necessary memory
  *
- * @ingroup buffer
+ * \ingroup buffer
  *
  */
 typedef void (APIENTRYP PFNGLBUFFERDATAPROC)(GLenum target, GLsizeiptr size, const void *data, GLenum usage);
 GLAPI PFNGLBUFFERDATAPROC glad_glBufferData;
 #define glBufferData glad_glBufferData
 
-/*! @brief update a subset of a buffer object's data store
+/*! \brief update a subset of a buffer object's data store
  *
- * updates data in the data store of the buffer object bound to @ref target.
+ * updates data in the data store of the buffer object bound to \ref target.
  * Copies from data at data[0]..data[size-1] to data_store[offset]..data_store[offset+size-1]
  * Can be more efficient than creating new buffers with glBufferData due to lack of allocation.
  * Will wait on rendering still done with the data before replacing it
@@ -1040,50 +1039,50 @@ GLAPI PFNGLBUFFERDATAPROC glad_glBufferData;
  *
  * Alignment rules as in glBufferData: offset of x in buffer is a multiple of sizeof(x).
  *
- * @param target target buffer object, must be GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
- * @param offset offset in bytes into the buffer object's data store where data replacement will begin
- * @param size size in bytes of the data store region being replaced
- * @param data pointer to the new data that will be copied into the data store
+ * \param target target buffer object, must be GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
+ * \param offset offset in bytes into the buffer object's data store where data replacement will begin
+ * \param size size in bytes of the data store region being replaced
+ * \param data pointer to the new data that will be copied into the data store
  *
- * @errors GL_INVALID_ENUM      if @ref target isn't GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
- *         GL_INVALID_VALUE     if @ref offset, @ref size negative, or offset+size > GL_BUFFER_SIZE
- *                                  of the buffer currently bound to @ref target
+ * \errors GL_INVALID_ENUM      if \ref target isn't GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
+ *         GL_INVALID_VALUE     if \ref offset, \ref size negative, or offset+size > GL_BUFFER_SIZE
+ *                                  of the buffer currently bound to \ref target
  *         GL_INVALID_OPERATION if reserved buffer object name 0 is bound to target
  *                                  only on GL 2.1 if the buffer is mapped, and on GL 4 if it's immutable
  *
- * @ingroup buffer
+ * \ingroup buffer
  */
 typedef void (APIENTRYP PFNGLBUFFERSUBDATAPROC)(GLenum target, GLintptr offset, GLsizeiptr size, const void *data);
 GLAPI PFNGLBUFFERSUBDATAPROC glad_glBufferSubData;
 #define glBufferSubData glad_glBufferSubData
 
-/*! @brief delete named buffer objects
+/*! \brief delete named buffer objects
  *
  * deletes buffer objects named by the elements of an array of buffer names. Those names then
  * can be reused for new buffers, currently bound buffers are also deleted and the binding reverts to 0.
  * any other elements in the array, being 0 or just not a buffer name at all, are ignored without error.
  *
- * @param n number of buffer objects to be deleted.
- * @param buffers array of buffer objects to be deleted.
+ * \param n number of buffer objects to be deleted.
+ * \param buffers array of buffer objects to be deleted.
  *
- * @errors GL_INVALID_VALUE if n < 0
+ * \errors GL_INVALID_VALUE if n < 0
  *
- * @ingroup buffer
+ * \ingroup buffer
  */
 typedef void (APIENTRYP PFNGLDELETEBUFFERSPROC)(GLsizei n, const GLuint *buffers);
 GLAPI PFNGLDELETEBUFFERSPROC glad_glDeleteBuffers;
 #define glDeleteBuffers glad_glDeleteBuffers
 
-/*! @brief generate buffer object names
+/*! \brief generate buffer object names
  *
  * returns n new _names_ for buffers. They still must be created by glBindBuffer
  *
- * @param n number of buffer object names to be generated
- * @param buffers array in which the generated buffer object names are stored
+ * \param n number of buffer object names to be generated
+ * \param buffers array in which the generated buffer object names are stored
  *
- * @errors GL_INVALID_VALUE if @ref n < 0
+ * \errors GL_INVALID_VALUE if \ref n < 0
  *
- * @ingroup buffer
+ * \ingroup buffer
  */
 typedef void (APIENTRYP PFNGLGENBUFFERSPROC)(GLsizei n, GLuint *buffers);
 GLAPI PFNGLGENBUFFERSPROC glad_glGenBuffers;
@@ -1092,7 +1091,7 @@ GLAPI PFNGLGENBUFFERSPROC glad_glGenBuffers;
 
 
 
-/*! @brief select active texture unit
+/*! \brief select active texture unit
  *
  * selects which texture unit subsequent texture state calls will affect.
  * The number of texture units is implementation dependent,
@@ -1109,23 +1108,23 @@ GLAPI PFNGLGENBUFFERSPROC glad_glGenBuffers;
  *
  * The initial value for the active texture is GL_TEXTURE0
  *
- * @param texture texture unit to be made active.
+ * \param texture texture unit to be made active.
  *      must be a valid GL_TEXTUREi
  *
- * @errors GL_INVALID_ENUM on wrong input enum parameter
+ * \errors GL_INVALID_ENUM on wrong input enum parameter
  *
- * @ingroup texture
+ * \ingroup texture
  */
 typedef void (APIENTRYP PFNGLACTIVETEXTUREPROC)(GLenum texture);
 GLAPI PFNGLACTIVETEXTUREPROC glad_glActiveTexture;
 #define glActiveTexture glad_glActiveTexture
 
-/*! @brief bind a named texture to a texturing target
+/*! \brief bind a named texture to a texturing target
  *
  * After generating a name with glGenTextures (necessary since GL 4.5), it can be
  * bound to a certain target. The texture than cen be operated on until it is unbound
  * or destroyed with glDeleteTextures.
- * @ref texture == 0 means the default target.
+ * \ref texture == 0 means the default target.
  *
  * binding a new texture name initializes it's memory for the appropriate use, it then
  * can be supplied with data (e.g. via glTexImage2D). It can be rebound to _the same_ target
@@ -1133,7 +1132,7 @@ GLAPI PFNGLACTIVETEXTUREPROC glad_glActiveTexture;
  * between different textures by name rather then by reloading the data associated to them.
  *
  * Therfore, it's best to generate as many names as necessary with glGenTextures, then
- * bind them all succesively to @ref target with glBindTexture, and fill them up with
+ * bind them all succesively to \ref target with glBindTexture, and fill them up with
  * the necessary data in between, and then use glBindTexture again to later switch between
  * them, and only call glDeleteTextures when the data behind them is unneeded.
  *
@@ -1141,21 +1140,21 @@ GLAPI PFNGLACTIVETEXTUREPROC glad_glActiveTexture;
  * possibility to also switch between various textures with glActiveTexture in combination with
  * glBindTexture, as to have multiple textures bound (not just loaded with inactive names) at once.
  *
- * @param target  the target to which the texture is bound.
+ * \param target  the target to which the texture is bound.
  *                  must be GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP
- * @param texture name (id) of a texture
+ * \param texture name (id) of a texture
  *
- * @errors GL_INVALID_ENUM      if @ref target is not GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP
- *         GL_INVALID_VALUE     if @ref texture is not returned from glGenTextures (in GL 4.5)
- *         GL_INVALID_OPERATION if @ref texture was loaded with a different target then it's first one
+ * \errors GL_INVALID_ENUM      if \ref target is not GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP
+ *         GL_INVALID_VALUE     if \ref texture is not returned from glGenTextures (in GL 4.5)
+ *         GL_INVALID_OPERATION if \ref texture was loaded with a different target then it's first one
  *
- * @ingroup texture
+ * \ingroup texture
  */
 typedef void (APIENTRYP PFNGLBINDTEXTUREPROC)(GLenum target, GLuint texture);
 GLAPI PFNGLBINDTEXTUREPROC glad_glBindTexture;
 #define glBindTexture glad_glBindTexture
 
-/*! @brief copy pixels into a 2D texture image
+/*! \brief copy pixels into a 2D texture image
  *
  * Copies pixels from the framebuffer into a texture. first works like glReadPixels with format GL_RGBA,
  * with conversion of the screen data to RGBA, but then works more like glTexImage2D for these pixel data
@@ -1171,51 +1170,51 @@ GLAPI PFNGLBINDTEXTUREPROC glad_glBindTexture;
  *
  * The data will be written into the _current texture unit_. See glActiveTexture.
  *
- * @param target target of the active unit to write to, must be GL_TEXTURE_2D or one of the faces of
+ * \param target target of the active unit to write to, must be GL_TEXTURE_2D or one of the faces of
  *                GL_TEXTURE_CUBE_MAP: GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
  *                                     GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
  *                                     GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
- * @param level level-of-detail image to override on the texture. 0 is base, n is nth mipmap reduction image
- * @param internalformat internal format of texture storage, must be GL_RGB or GL_RGBA
- * @param x the x coordinate of the lower left corner
- * @param y the y coordinate of the lower left corner
- * @param width  the width  of the copy region, must be a power of two for GL 2.1 compatibility
- * @param height the height of the copy region, must be a power of two for GL 2.1 compatibility
- * @param border must be 0, not used after GL 2.1
+ * \param level level-of-detail image to override on the texture. 0 is base, n is nth mipmap reduction image
+ * \param internalformat internal format of texture storage, must be GL_RGB or GL_RGBA
+ * \param x the x coordinate of the lower left corner
+ * \param y the y coordinate of the lower left corner
+ * \param width  the width  of the copy region, must be a power of two for GL 2.1 compatibility
+ * \param height the height of the copy region, must be a power of two for GL 2.1 compatibility
+ * \param border must be 0, not used after GL 2.1
  *
- * @errors GL_INVALID_ENUM  if @ref target or @ref internalformat is not one of the accepted values
- *         GL_INVALID_VALUE     if @ref target is a cube map face and width != height (only GL ES 2.0)
+ * \errors GL_INVALID_ENUM  if \ref target or \ref internalformat is not one of the accepted values
+ *         GL_INVALID_VALUE     if \ref target is a cube map face and width != height (only GL ES 2.0)
  *                              or if level < 0, or width and height outside of range 0..GL_MAX_TEXTURE_SIZE
  *                                              or 0..GL_MAX_CUBE_MAP_TEXTURE_SIZE for GL ES 2.0,
- *                              or if border != 0, or if @ref height or @ref width no power of two (GL 2.1),
- *                              or in GL 2.1 if @ref internalformat is not one of the accepted values
+ *                              or if border != 0, or if \ref height or \ref width no power of two (GL 2.1),
+ *                              or in GL 2.1 if \ref internalformat is not one of the accepted values
  *                              or (maybe?) if level > log_2 GL_MAX_TEXTURE_SIZE
  *         GL_INVALID_OPERATION if the framebuffer is wrongly configured (not achievable in the
  *                                  common subset, similar with the GL_INVALID_FRAMEBUFFER_OPERATION error)
  *
- * @ingroup texture
+ * \ingroup texture
  */
 typedef void (APIENTRYP PFNGLCOPYTEXIMAGE2DPROC)(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
 GLAPI PFNGLCOPYTEXIMAGE2DPROC glad_glCopyTexImage2D;
 #define glCopyTexImage2D glad_glCopyTexImage2D
 
-/*! @brief copy a two-dimensional texture subimage
+/*! \brief copy a two-dimensional texture subimage
  *
  * replaces part of an existing texture image with data from the frame buffer.
  * inserts into the rectangle from (xoffset, yoffset) in the lower left to with height and width specified
  * rectangle must lie inside the texture, but the data rectangle can lie outside of the frame buffer, then
  * undefined values are copied. width == height == 0 means a no-op.
  *
- * @param target  like in glCopyTexImage2D
- * @param level   like in glCopyTexImage2D
- * @param xoffset the x coordinate of the lower left corner within the texture, where data will be inserted
- * @param yoffset the y coordinate of the lower left corner within the texture, where data will be inserted
- * @param x       like in glCopyTexImage2D
- * @param y       like in glCopyTexImage2D
- * @param width   like in glCopyTexImage2D
- * @param height  like in glCopyTexImage2D
+ * \param target  like in glCopyTexImage2D
+ * \param level   like in glCopyTexImage2D
+ * \param xoffset the x coordinate of the lower left corner within the texture, where data will be inserted
+ * \param yoffset the y coordinate of the lower left corner within the texture, where data will be inserted
+ * \param x       like in glCopyTexImage2D
+ * \param y       like in glCopyTexImage2D
+ * \param width   like in glCopyTexImage2D
+ * \param height  like in glCopyTexImage2D
  *
- * @errors GL_INVALID_ENUM      if @ref target is not one of the accepted values
+ * \errors GL_INVALID_ENUM      if \ref target is not one of the accepted values
  *         GL_INVALID_VALUE     if level < 0, width, height, xoffset, yoffset < 0, or
  *                              xoffset + width > w or yoffset + height > h
  *                                  with w, h width and height of the texture copied into
@@ -1224,39 +1223,39 @@ GLAPI PFNGLCOPYTEXIMAGE2DPROC glad_glCopyTexImage2D;
  *                              or if the framebuffer is wrongly configured (impossible in
  *                              common GL, alongside with the GL_INVALID_FRAMEBUFFER_OPERATION error)
  *
- * @ingroup texture
+ * \ingroup texture
  */
 typedef void (APIENTRYP PFNGLCOPYTEXSUBIMAGE2DPROC)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 GLAPI PFNGLCOPYTEXSUBIMAGE2DPROC glad_glCopyTexSubImage2D;
 #define glCopyTexSubImage2D glad_glCopyTexSubImage2D
 
-/*! @brief delete named textures
+/*! \brief delete named textures
  *
  * deletes textures named by the elements of an array of texture names. Those names then
  * can be reused for new textures, currently bound textures are also deleted and the binding reverts to 0.
  * any other elements in the array, being 0 or just not a textures name at all, are ignored without error.
  *
- * @param n number of textures to be deleted.
- * @param buffers array of textures to be deleted.
+ * \param n number of textures to be deleted.
+ * \param buffers array of textures to be deleted.
  *
- * @errors GL_INVALID_VALUE if n < 0
+ * \errors GL_INVALID_VALUE if n < 0
  *
- * @ingroup texture
+ * \ingroup texture
  */
 typedef void (APIENTRYP PFNGLDELETETEXTURESPROC)(GLsizei n, const GLuint *textures);
 GLAPI PFNGLDELETETEXTURESPROC glad_glDeleteTextures;
 #define glDeleteTextures glad_glDeleteTextures
 
-/*! @brief generate texture names
+/*! \brief generate texture names
  *
  * returns n new _names_ for texture. They still must be initialized by glBindTexture
  *
- * @param n number of texture names to be generated
- * @param buffers array in which the generated texture names are stored
+ * \param n number of texture names to be generated
+ * \param buffers array in which the generated texture names are stored
  *
- * @errors GL_INVALID_VALUE if @ref n < 0
+ * \errors GL_INVALID_VALUE if \ref n < 0
  *
- * @ingroup texture
+ * \ingroup texture
  */
 typedef void (APIENTRYP PFNGLGENTEXTURESPROC)(GLsizei n, GLuint *textures);
 GLAPI PFNGLGENTEXTURESPROC glad_glGenTextures;
@@ -1269,7 +1268,7 @@ GLAPI PFNGLGENTEXTURESPROC glad_glGenTextures;
 
 
 
-/*! @brief attach a shader object to a program object
+/*! \brief attach a shader object to a program object
  *
  * add a shader object to the list of shaders to be linked to a
  * program object. It only marks them to be linked later, doesn't
@@ -1283,123 +1282,123 @@ GLAPI PFNGLGENTEXTURESPROC glad_glGenTextures;
  * Even if deleted, the shader will not be detached automatically
  * if attached, it needs to be detached manually with glDetachShader.
  *
- * @param program program object to which a shader object will be attached
- * @param shader shader object to be attached
+ * \param program program object to which a shader object will be attached
+ * \param shader shader object to be attached
  *
- * @errors GL_INVALID_VALUE     if program or shader are not generated by GL
+ * \errors GL_INVALID_VALUE     if program or shader are not generated by GL
  *         GL_INVALID_OPERATION if program isn't a program, shader isn't a shader,
  *                                  the shader is already attached or, specifically
  *                                  in GL ES, if there is another shader of the same
  *                                  type already attached
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef void (APIENTRYP PFNGLATTACHSHADERPROC)(GLuint program, GLuint shader);
 GLAPI PFNGLATTACHSHADERPROC glad_glAttachShader;
 #define glAttachShader glad_glAttachShader
 
-/*! @brief compile a shader object
+/*! \brief compile a shader object
  *
- * Compiles the source code stored in @ref shader to a shader binary then stored in @ref shader
+ * Compiles the source code stored in \ref shader to a shader binary then stored in \ref shader
  * Compilation can fail for various reasons, however, that doesn't produce a GL error and must
  * be queried by the shader property GL_COMPILE_STATUS (see glGetShaderiv) and glGetShaderInfoLog
  *
- * @param shader shader object to be compiled
+ * \param shader shader object to be compiled
  *
- * @errors  GL_INVALID_OPERATION if @ref shader isn't a shader or there is no shader compiler in GL ES 2.0
- *          GL_INVALID_VALUE     if @ref shader is not a value generated by OpenGL
+ * \errors  GL_INVALID_OPERATION if \ref shader isn't a shader or there is no shader compiler in GL ES 2.0
+ *          GL_INVALID_VALUE     if \ref shader is not a value generated by OpenGL
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef void (APIENTRYP PFNGLCOMPILESHADERPROC)(GLuint shader);
 GLAPI PFNGLCOMPILESHADERPROC glad_glCompileShader;
 #define glCompileShader glad_glCompileShader
 
-/*! @brief create a program object
+/*! \brief create a program object
  *
  * creates an empty program object and returns its name / id.
  *
- * @return the program name (id), or 0 if an error occurs creating the program object
+ * \return the program name (id), or 0 if an error occurs creating the program object
  *
- * @errors none
+ * \errors none
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef GLuint (APIENTRYP PFNGLCREATEPROGRAMPROC)(void);
 GLAPI PFNGLCREATEPROGRAMPROC glad_glCreateProgram;
 #define glCreateProgram glad_glCreateProgram
 
-/*! @brief create a shader object
+/*! \brief create a shader object
  *
  * creates an empty shader object of a given type and returns its name / id
  *
- * @param type type of shader to be created, must be GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+ * \param type type of shader to be created, must be GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
  *
- * @return the shader name (id), or 0 if an error occurs creating the shader object
+ * \return the shader name (id), or 0 if an error occurs creating the shader object
  *
- * @errors GL_INVALID_ENUM if type is not GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
+ * \errors GL_INVALID_ENUM if type is not GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef GLuint (APIENTRYP PFNGLCREATESHADERPROC)(GLenum type);
 GLAPI PFNGLCREATESHADERPROC glad_glCreateShader;
 #define glCreateShader glad_glCreateShader
 
-/*! @brief delete a program object
+/*! \brief delete a program object
  *
  * deletes and deallocates a program object and all that belongs to it.
  * If the program is currently running, it will only be deleted after it no longer is
  * shader objects will be detached, but not deleted.
- * @ref program == 0 will be ignored.
+ * \ref program == 0 will be ignored.
  * It will also set GL_DELETE_STATUS to GL_TRUE (see glGetProgramiv)
  *
- * @param program the program object to be deleted
+ * \param program the program object to be deleted
  *
- * @errors GL_INVALID_VALUE if @ref program is not a value generated by OpenGL
+ * \errors GL_INVALID_VALUE if \ref program is not a value generated by OpenGL
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef void (APIENTRYP PFNGLDELETEPROGRAMPROC)(GLuint program);
 GLAPI PFNGLDELETEPROGRAMPROC glad_glDeleteProgram;
 #define glDeleteProgram glad_glDeleteProgram
 
-/*! @brief delete a shader object
+/*! \brief delete a shader object
  *
  * deletes and deallocates a shader object and all that belongs to it.
  * If the shader is currently attached to a program, it will only be deleted after it no longer is
- * @ref shader == 0 will be ignored.
+ * \ref shader == 0 will be ignored.
  * It will also set GL_DELETE_STATUS to GL_TRUE (see glGetShaderiv)
  *
- * @param shader the shader object to be deleted
+ * \param shader the shader object to be deleted
  *
- * @errors GL_INVALID_VALUE if @ref shader is not a value generated by OpenGL
+ * \errors GL_INVALID_VALUE if \ref shader is not a value generated by OpenGL
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef void (APIENTRYP PFNGLDELETESHADERPROC)(GLuint shader);
 GLAPI PFNGLDELETESHADERPROC glad_glDeleteShader;
 #define glDeleteShader glad_glDeleteShader
 
-/*! @brief detach a shader object from a program object (to which it is attached)
+/*! \brief detach a shader object from a program object (to which it is attached)
  *
  * undoes glAttachShader by detaching the shader from the program object
- * if called afer glDeleteShader and @ref shader is no longer attached to any program, it will be deleted
+ * if called afer glDeleteShader and \ref shader is no longer attached to any program, it will be deleted
  *
- * @param program program object from which to detach the shader object
- * @param shader shader object to be detached
+ * \param program program object from which to detach the shader object
+ * \param shader shader object to be detached
  *
- * @errors GL_INVALID_VALUE     if @ref program or @ref shader is a value that was not generated by OpenGL
- *         GL_INVALID_OPERATION if @ref program isn't a program object, @ref shader isn't a shader object
- *                              or wasn't attached to @ref program
+ * \errors GL_INVALID_VALUE     if \ref program or \ref shader is a value that was not generated by OpenGL
+ *         GL_INVALID_OPERATION if \ref program isn't a program object, \ref shader isn't a shader object
+ *                              or wasn't attached to \ref program
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef void (APIENTRYP PFNGLDETACHSHADERPROC)(GLuint program, GLuint shader);
 GLAPI PFNGLDETACHSHADERPROC glad_glDetachShader;
 #define glDetachShader glad_glDetachShader
 
 
-/*! @brief associate a generic vertex attribute index with a named attribute variable
+/*! \brief associate a generic vertex attribute index with a named attribute variable
  *
  * Creates an association between the input attribute indices 0..GL_MAX_VERTEX_ATTRIBS-1,
  * (of which 0 is the generic attribute), which stay the same between
@@ -1418,33 +1417,33 @@ GLAPI PFNGLDETACHSHADERPROC glad_glDetachShader;
  * Without calling glBindAttribLocation, the varible will get assigned an index you can query with
  * glGetAttribLocation.
  *
- * the string @ref name can be freed after call, since it is copied.
+ * the string \ref name can be freed after call, since it is copied.
  *
- * @param program handle of the program object in which the association is to be made
- * @param index index of the generic vertex attribute to be bound
- * @param name null terminated string containing the name of the vertex shader attribute variable
+ * \param program handle of the program object in which the association is to be made
+ * \param index index of the generic vertex attribute to be bound
+ * \param name null terminated string containing the name of the vertex shader attribute variable
  * to which index is to be bound
  *
- * @errors GL_INVALID_VALUE         if index is not in [0,GL_MAX_VERTEX_ATTRIBS-1]
+ * \errors GL_INVALID_VALUE         if index is not in [0,GL_MAX_VERTEX_ATTRIBS-1]
  *                                  or program isn't generated by GL
  *         GL_INVALID_OPERATION     if name starts with "gl_" or program isn't a program
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef void (APIENTRYP PFNGLBINDATTRIBLOCATIONPROC)(GLuint program, GLuint index, const GLchar *name);
 GLAPI PFNGLBINDATTRIBLOCATIONPROC glad_glBindAttribLocation;
 #define glBindAttribLocation glad_glBindAttribLocation
 
-/*! @brief enable or disable a generic vertex attribute array
+/*! \brief enable or disable a generic vertex attribute array
  *
  * enables/disables vertex attribute arrays used in draw calls, since they're disabled by default.
  *
- * @param index index of the generic vertex attribute to be enabled or disabled
+ * \param index index of the generic vertex attribute to be enabled or disabled
  *
- * @errors GL_INVALID_VALUE     if index >= GL_MAX_VERTEX_ATTRIBS
+ * \errors GL_INVALID_VALUE     if index >= GL_MAX_VERTEX_ATTRIBS
  *         GL_INVALID_OPERATION if no vertex array object is bound only in GL 4
  *
- * @ingroup shader
+ * \ingroup shader
  */
 typedef void (APIENTRYP PFNGLDISABLEVERTEXATTRIBARRAYPROC)(GLuint index);
 GLAPI PFNGLDISABLEVERTEXATTRIBARRAYPROC glad_glDisableVertexAttribArray;
@@ -1453,7 +1452,7 @@ typedef void (APIENTRYP PFNGLENABLEVERTEXATTRIBARRAYPROC)(GLuint index);
 GLAPI PFNGLENABLEVERTEXATTRIBARRAYPROC glad_glEnableVertexAttribArray;
 #define glEnableVertexAttribArray glad_glEnableVertexAttribArray
 
-/*! @brief return information about an active attribute variable (for the specified program object)
+/*! \brief return information about an active attribute variable (for the specified program object)
  *
  *
  */
