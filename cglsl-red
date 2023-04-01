@@ -1,0 +1,30 @@
+
+id ::= [_a-zA-Z] [_a-zA-Z0-9]+?
+num ::= [1-9][0-9]+? | 0[0-7]+? | 0[xX][0-9a-fA-F]+
+    | ([0-9]+ '.' [0-9]+? | '.' [0-9]+) ([eE] [+-]? [0-9]+)? | [0-9]+ [eE] [+-]? [0-9]+
+func ::= id|"float"|"int"|"bool"|"vec2"|"vec3"|"vec4"|"bvec2"|"bvec3"|"bvec4"|"ivec2"|"ivec3"|"ivec4"
+            |"mat2"|"mat3"|"mat4"
+type ::= func|"void"|"sampler2d"|"samplercube"|
+            "struct" id? '{' (type <id ('['constant_expression']')?> ';')+ '}'
+unary_expression ::= ('++'|'--'|'+'|'-'|'!')+?
+        (id|num|"true"|"false"|'('expression')'|func'('(<initializer>|"void")?')')
+        ('[' expression ']' | '.' id | '++' | '--')+?
+binary_expression ::= unary_expression (([*/+-<>]|'>='|'<='|'=='|'!='|'&&'|'^^'|'||') unary_expression)+?
+constant_expression ::= (binary_expression '?' expression ':')+? binary_expression
+initializer ::= (unary_expression ('='|'*='|'/='|'+='|'-='))+? constant_expression
+expression ::= <initializer>
+declaration ::= (function_prototype |
+    fully_specified_type <id ('['constant_expression']'|'=' initializer)?>) ';'
+function_prototype ::=
+    fully_specified_type id '('<"const"? ("in"|"out"|"inout")? type id? ('['constant_expression']')?>?')'
+fully_specified_type ::= ("const"|"uniform"%%"attribute"|"varying"%%)? type
+statement ::= compound_statement|declaration|expression?';'
+	| "if" '(' expression ')' statement ("else" statement)?
+	| "while" '(' condition ')' statement
+	| "do" statement "while" '(' expression ')' ';'
+	| "for" '(' (expression?';'|declaration) condition? ';' expression? ')' statement
+	| ("continue"|"break"|"return" expression?|"discard")';'
+compound_statement ::= '{' statement+? '}'
+condition ::= expression | fully_specified_type id '=' initializer
+translation_unit ::= (function_prototype compound_statement|declaration)+
+
